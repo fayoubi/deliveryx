@@ -1,0 +1,34 @@
+# Uncomment the next line to define a global platform for your project
+platform :ios, '15.0'
+
+target 'DeliveryXOApp' do
+  # Comment the next line if you don't want to use dynamic frameworks
+  use_frameworks!
+
+  # Networking
+  pod 'Alamofire', '~> 5.8'
+
+  # JSON Parsing
+  pod 'SwiftyJSON', '~> 5.0'
+
+  # Image Loading & Caching
+  pod 'SDWebImage', '~> 5.18'
+
+  # Auto Layout
+  pod 'SnapKit', '~> 5.6'
+
+  # Progress HUD
+  pod 'SVProgressHUD', '~> 2.3'
+
+  # Image Picker
+  pod 'YPImagePicker', '~> 5.3'
+
+end
+
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.0'
+    end
+  end
+end
