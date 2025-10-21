@@ -1,0 +1,146 @@
+openapi: 3.0.3
+info:
+  title: DeliveryX Media Service API
+  description: API for generating pre-signed upload URLs for media files
+  version: 1.0.0
+  contact:
+    name: DeliveryX API Support
+    email: api@deliveryx.com
+
+servers:
+  - url: http://localhost/api/v1/media
+    description: Local development (via Traefik)
+  - url: http://localhost:8084/api/v1/media
+    description: Direct service access
+
+tags:
+  - name: Media
+    description: Media upload operations
+
+paths:
+  /upload-url:
+    post:
+      tags:
+        - Media
+      summary: Generate pre-signed upload URL
+      description: |
+        Generates a pre-signed S3 URL for uploading images. The URL is valid for 15 minutes.
+
+        **Usage Flow:**
+        1. Call this endpoint to get upload_url and file_url
+        2. Use the upload_url to PUT your file directly to S3
+        3. Save the file_url in your database (for store logo, product image, etc.)
+
+        **Restrictions:**
+        - Maximum file size: 10MB
+        - Allowed content types: image/jpeg, image/jpg, image/png, image/gif, image/webp
+      operationId: generateUploadURL
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UploadURLRequest'
+            examples:
+              product_image:
+                summary: Upload product image
+                value:
+                  file_name: "burger.jpg"
+                  content_type: "image/jpeg"
+                  file_size: 512000
+              store_logo:
+                summary: Upload store logo
+                value:
+                  file_name: "logo.png"
+                  content_type: "image/png"
+                  file_size: 102400
+      responses:
+        '200':
+          description: Pre-signed URL generated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadURLResponse'
+              examples:
+                success:
+                  value:
+                    upload_url: "http://minio:9000/deliveryx-media/2025/10/21/20251021-001234-abc123.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&..."
+                    file_url: "http://minio:9000/deliveryx-media/2025/10/21/20251021-001234-abc123.jpg"
+                    expires_in: 900
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                file_too_large:
+                  value:
+                    error: "File size exceeds maximum allowed (10MB)"
+                invalid_type:
+                  value:
+                    error: "Only image files are allowed"
+                missing_fields:
+                  value:
+                    error: "file_name, content_type, and file_size are required"
+        '500':
+          description: Failed to generate pre-signed URL
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    UploadURLRequest:
+      type: object
+      required:
+        - file_name
+        - content_type
+        - file_size
+      properties:
+        file_name:
+          type: string
+          minLength: 1
+          example: "product-image.jpg"
+          description: Original filename with extension
+        content_type:
+          type: string
+          enum:
+            - image/jpeg
+            - image/jpg
+            - image/png
+            - image/gif
+            - image/webp
+          example: "image/jpeg"
+          description: MIME type of the file
+        file_size:
+          type: integer
+          minimum: 1
+          maximum: 10485760
+          example: 1024000
+          description: File size in bytes (max 10MB = 10485760 bytes)
+
+    UploadURLResponse:
+      type: object
+      properties:
+        upload_url:
+          type: string
+          format: uri
+          description: Pre-signed URL for uploading the file (PUT request)
+          example: "http://minio:9000/deliveryx-media/2025/10/21/20251021-001234-abc123.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=deliveryx%2F20251021%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20251021T001234Z&X-Amz-Expires=900&X-Amz-SignedHeaders=host&x-id=PutObject&X-Amz-Signature=..."
+        file_url:
+          type: string
+          format: uri
+          description: Final public URL of the file (save this in your database)
+          example: "http://minio:9000/deliveryx-media/2025/10/21/20251021-001234-abc123.jpg"
+        expires_in:
+          type: integer
+          description: Number of seconds until the upload_url expires
+          example: 900
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string

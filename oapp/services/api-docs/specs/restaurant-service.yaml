@@ -1,0 +1,383 @@
+openapi: 3.0.3
+info:
+  title: DeliveryX Restaurant Service API
+  description: API for managing restaurant stores, locations, and operating hours
+  version: 1.0.0
+  contact:
+    name: DeliveryX API Support
+    email: api@deliveryx.com
+
+servers:
+  - url: http://localhost/api/v1
+    description: Local development (via Traefik)
+  - url: http://localhost:8081/api/v1
+    description: Direct service access
+
+tags:
+  - name: Stores
+    description: Store management operations
+  - name: Locations
+    description: Location management operations
+  - name: Operating Hours
+    description: Operating hours management
+
+paths:
+  /stores:
+    post:
+      tags:
+        - Stores
+      summary: Create a new store
+      operationId: createStore
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateStoreRequest'
+      responses:
+        '201':
+          description: Store created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Store'
+        '400':
+          description: Bad request - validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /stores/{store_id}:
+    get:
+      tags:
+        - Stores
+      summary: Get store details
+      operationId: getStore
+      parameters:
+        - name: store_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Store details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Store'
+        '404':
+          description: Store not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    put:
+      tags:
+        - Stores
+      summary: Update store
+      operationId: updateStore
+      parameters:
+        - name: store_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateStoreRequest'
+      responses:
+        '200':
+          description: Store updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Store'
+        '404':
+          description: Store not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /stores/{store_id}/locations:
+    post:
+      tags:
+        - Locations
+      summary: Create a location for a store
+      operationId: createLocation
+      parameters:
+        - name: store_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateLocationRequest'
+      responses:
+        '201':
+          description: Location created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Location'
+        '404':
+          description: Store not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /locations/{location_id}:
+    get:
+      tags:
+        - Locations
+      summary: Get location details
+      operationId: getLocation
+      parameters:
+        - name: location_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Location details with operating hours
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LocationWithHours'
+        '404':
+          description: Location not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /locations/{location_id}/operating-hours:
+    put:
+      tags:
+        - Operating Hours
+      summary: Set operating hours for a location
+      operationId: setOperatingHours
+      parameters:
+        - name: location_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/OperatingHoursRequest'
+              minItems: 7
+              maxItems: 7
+      responses:
+        '200':
+          description: Operating hours updated successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OperatingHours'
+        '404':
+          description: Location not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    Store:
+      type: object
+      properties:
+        store_id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+          maxLength: 1000
+          nullable: true
+        logo_url:
+          type: string
+          nullable: true
+        phone:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    CreateStoreRequest:
+      type: object
+      required:
+        - name
+        - phone
+      properties:
+        name:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+          maxLength: 1000
+        logo_url:
+          type: string
+        phone:
+          type: string
+
+    UpdateStoreRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+          maxLength: 1000
+        logo_url:
+          type: string
+        phone:
+          type: string
+
+    Location:
+      type: object
+      properties:
+        location_id:
+          type: string
+          format: uuid
+        store_id:
+          type: string
+          format: uuid
+        address:
+          type: string
+        city:
+          type: string
+        postal_code:
+          type: string
+        phone:
+          type: string
+        location_manager:
+          type: string
+          nullable: true
+        latitude:
+          type: number
+          format: double
+          nullable: true
+        longitude:
+          type: number
+          format: double
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    LocationWithHours:
+      allOf:
+        - $ref: '#/components/schemas/Location'
+        - type: object
+          properties:
+            operating_hours:
+              type: array
+              items:
+                $ref: '#/components/schemas/OperatingHours'
+
+    CreateLocationRequest:
+      type: object
+      required:
+        - address
+        - city
+        - phone
+      properties:
+        address:
+          type: string
+        city:
+          type: string
+        postal_code:
+          type: string
+        phone:
+          type: string
+        location_manager:
+          type: string
+        latitude:
+          type: number
+          format: double
+        longitude:
+          type: number
+          format: double
+
+    OperatingHours:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        location_id:
+          type: string
+          format: uuid
+        day_of_week:
+          type: string
+          enum: [MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY]
+        open_time:
+          type: string
+          pattern: '^([01]?[0-9]|2[0-3]):[0-5][0-9]$'
+          example: "09:00"
+        close_time:
+          type: string
+          pattern: '^([01]?[0-9]|2[0-3]):[0-5][0-9]$'
+          example: "22:00"
+        is_closed:
+          type: boolean
+
+    OperatingHoursRequest:
+      type: object
+      required:
+        - day_of_week
+        - is_closed
+      properties:
+        day_of_week:
+          type: string
+          enum: [MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY]
+        open_time:
+          type: string
+          pattern: '^([01]?[0-9]|2[0-3]):[0-5][0-9]$'
+          example: "09:00"
+        close_time:
+          type: string
+          pattern: '^([01]?[0-9]|2[0-3]):[0-5][0-9]$'
+          example: "22:00"
+        is_closed:
+          type: boolean
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string

@@ -1,0 +1,844 @@
+openapi: 3.0.3
+info:
+  title: DeliveryX Menu Service API
+  description: API for managing menus, products, collections, and menu composition
+  version: 1.0.0
+  contact:
+    name: DeliveryX API Support
+    email: api@deliveryx.com
+
+servers:
+  - url: http://localhost/api/v1
+    description: Local development (via Traefik)
+  - url: http://localhost:8082/api/v1
+    description: Direct service access
+
+tags:
+  - name: Menus
+    description: Menu initialization and management
+  - name: Products
+    description: Product CRUD operations
+  - name: Collections
+    description: Collection (category) management
+  - name: Menu Composition
+    description: Adding products to menus
+  - name: Attribute Groups
+    description: Product attribute groups and options
+
+paths:
+  # Menu Endpoints
+  /locations/{location_id}/menus:
+    post:
+      tags:
+        - Menus
+      summary: Create a draft menu for a location
+      operationId: createMenu
+      parameters:
+        - name: location_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '201':
+          description: Menu created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Menu'
+        '400':
+          description: Menu already exists for this location
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /menus/{menu_id}:
+    get:
+      tags:
+        - Menus
+      summary: Get complete menu structure
+      description: Returns the full menu with nested collections, products, and attributes
+      operationId: getCompleteMenu
+      parameters:
+        - name: menu_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Complete menu structure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompleteMenu'
+        '404':
+          description: Menu not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /menus/{menu_id}/status:
+    get:
+      tags:
+        - Menus
+      summary: Get menu status
+      operationId: getMenuStatus
+      parameters:
+        - name: menu_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Menu status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MenuStatus'
+        '404':
+          description: Menu not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /menus/{menu_id}/submit:
+    post:
+      tags:
+        - Menus
+      summary: Submit menu for approval
+      description: Changes menu status from draft to pending_review and publishes event to queue
+      operationId: submitMenu
+      parameters:
+        - name: menu_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Menu submitted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Menu'
+        '400':
+          description: Menu validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # Collection Endpoints
+  /menus/{menu_id}/collections:
+    post:
+      tags:
+        - Collections
+      summary: Add a collection to menu
+      operationId: createCollection
+      parameters:
+        - name: menu_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCollectionRequest'
+      responses:
+        '201':
+          description: Collection created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Collection'
+        '400':
+          description: Invalid collection name or menu not in draft
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /collections/{collection_id}:
+    delete:
+      tags:
+        - Collections
+      summary: Delete a collection
+      operationId: deleteCollection
+      parameters:
+        - name: collection_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Collection deleted successfully
+        '400':
+          description: Menu not in draft status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Collection not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /menus/{menu_id}/collections/reorder:
+    put:
+      tags:
+        - Collections
+      summary: Reorder collections in menu
+      operationId: reorderCollections
+      parameters:
+        - name: menu_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReorderRequest'
+      responses:
+        '200':
+          description: Collections reordered successfully
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # Product Endpoints
+  /locations/{location_id}/products:
+    post:
+      tags:
+        - Products
+      summary: Create a product
+      operationId: createProduct
+      parameters:
+        - name: location_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProductRequest'
+      responses:
+        '201':
+          description: Product created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /products/{product_id}:
+    get:
+      tags:
+        - Products
+      summary: Get product details
+      operationId: getProduct
+      parameters:
+        - name: product_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Product details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '404':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    put:
+      tags:
+        - Products
+      summary: Update product
+      operationId: updateProduct
+      parameters:
+        - name: product_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProductRequest'
+      responses:
+        '200':
+          description: Product updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '400':
+          description: Menu not in draft status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    delete:
+      tags:
+        - Products
+      summary: Delete product
+      operationId: deleteProduct
+      parameters:
+        - name: product_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Product deleted successfully
+        '400':
+          description: Menu not in draft status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /products/{product_id}/availability:
+    patch:
+      tags:
+        - Products
+      summary: Toggle product availability
+      description: Can be done even when menu is active
+      operationId: toggleAvailability
+      parameters:
+        - name: product_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AvailabilityRequest'
+      responses:
+        '200':
+          description: Availability updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '404':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # Menu Composition Endpoints
+  /menus/{menu_id}/products:
+    post:
+      tags:
+        - Menu Composition
+      summary: Add product to menu
+      operationId: addProductToMenu
+      parameters:
+        - name: menu_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddProductToMenuRequest'
+      responses:
+        '201':
+          description: Product added to menu
+        '400':
+          description: Menu not in draft or product already in menu
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /menus/{menu_id}/products/{product_id}:
+    delete:
+      tags:
+        - Menu Composition
+      summary: Remove product from menu
+      operationId: removeProductFromMenu
+      parameters:
+        - name: menu_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: product_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Product removed from menu
+        '400':
+          description: Menu not in draft
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /collections/{collection_id}/products/reorder:
+    put:
+      tags:
+        - Menu Composition
+      summary: Reorder products in collection
+      operationId: reorderProducts
+      parameters:
+        - name: collection_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReorderRequest'
+      responses:
+        '200':
+          description: Products reordered successfully
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # Attribute Group Endpoints
+  /attribute-groups:
+    get:
+      tags:
+        - Attribute Groups
+      summary: List all attribute groups
+      operationId: getAttributeGroups
+      responses:
+        '200':
+          description: List of attribute groups
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AttributeGroup'
+
+  /attribute-groups/{id}/attributes:
+    get:
+      tags:
+        - Attribute Groups
+      summary: Get attributes for a group
+      operationId: getAttributes
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: List of attributes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Attribute'
+        '404':
+          description: Attribute group not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    Menu:
+      type: object
+      properties:
+        menu_id:
+          type: string
+          format: uuid
+        location_id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum: [draft, pending_review, approved, rejected, active]
+        submitted_at:
+          type: string
+          format: date-time
+          nullable: true
+        reviewed_at:
+          type: string
+          format: date-time
+          nullable: true
+        rejection_reason:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    MenuStatus:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [draft, pending_review, approved, rejected, active]
+        submitted_at:
+          type: string
+          format: date-time
+          nullable: true
+        reviewed_at:
+          type: string
+          format: date-time
+          nullable: true
+        rejection_reason:
+          type: string
+          nullable: true
+
+    CompleteMenu:
+      type: object
+      properties:
+        attributes:
+          type: array
+          items:
+            $ref: '#/components/schemas/MenuAttribute'
+        attribute_groups:
+          type: array
+          items:
+            $ref: '#/components/schemas/MenuAttributeGroup'
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/MenuProduct'
+        collections:
+          type: array
+          items:
+            $ref: '#/components/schemas/MenuCollection'
+
+    Collection:
+      type: object
+      properties:
+        collection_id:
+          type: string
+          format: uuid
+        menu_id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          enum: [Pizzas, Burgers, Sides, Desserts, Drinks, Salads, Breakfast, Sandwiches, Pasta, Seafood]
+        position:
+          type: integer
+        image_url:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+
+    CreateCollectionRequest:
+      type: object
+      required:
+        - name
+        - position
+      properties:
+        name:
+          type: string
+          enum: [Pizzas, Burgers, Sides, Desserts, Drinks, Salads, Breakfast, Sandwiches, Pasta, Seafood]
+        position:
+          type: integer
+        image_url:
+          type: string
+
+    Product:
+      type: object
+      properties:
+        product_id:
+          type: string
+          format: uuid
+        location_id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        price:
+          type: number
+          format: double
+        category:
+          type: string
+          nullable: true
+        image_url:
+          type: string
+          nullable: true
+        is_available:
+          type: boolean
+        attribute_group_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    CreateProductRequest:
+      type: object
+      required:
+        - name
+        - price
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+          format: double
+          minimum: 0
+        category:
+          type: string
+        image_url:
+          type: string
+        attribute_group_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+
+    UpdateProductRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+          format: double
+          minimum: 0
+        category:
+          type: string
+        image_url:
+          type: string
+        attribute_group_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+
+    AvailabilityRequest:
+      type: object
+      required:
+        - is_available
+      properties:
+        is_available:
+          type: boolean
+
+    AddProductToMenuRequest:
+      type: object
+      required:
+        - product_id
+        - collection_id
+        - position
+      properties:
+        product_id:
+          type: string
+          format: uuid
+        collection_id:
+          type: string
+          format: uuid
+        section_id:
+          type: string
+          format: uuid
+          nullable: true
+        position:
+          type: integer
+
+    ReorderRequest:
+      type: object
+      required:
+        - items
+      properties:
+        items:
+          type: array
+          items:
+            type: object
+            required:
+              - id
+              - position
+            properties:
+              id:
+                type: string
+                format: uuid
+              position:
+                type: integer
+
+    AttributeGroup:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        min_selections:
+          type: integer
+        max_selections:
+          type: integer
+        is_required:
+          type: boolean
+
+    Attribute:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        attribute_group_id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        price_impact:
+          type: integer
+        is_default:
+          type: boolean
+
+    MenuAttribute:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        price:
+          type: integer
+
+    MenuAttributeGroup:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        min_selections:
+          type: integer
+        max_selections:
+          type: integer
+        is_required:
+          type: boolean
+        attributes:
+          type: array
+          items:
+            type: string
+
+    MenuProduct:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: integer
+        image_url:
+          type: string
+        is_available:
+          type: boolean
+        attribute_groups:
+          type: array
+          items:
+            type: string
+
+    MenuCollection:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        products:
+          type: array
+          items:
+            type: string
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
