@@ -9,7 +9,7 @@ import Foundation
 import Alamofire
 
 /// Custom errors for API operations
-enum APIError: Error {
+enum APIError: Error, LocalizedError {
     case invalidURL
     case networkError(Error)
     case decodingError(Error)
@@ -17,20 +17,20 @@ enum APIError: Error {
     case serverError(statusCode: Int, message: String?)
     case unknownError
 
-    var localizedDescription: String {
+    var errorDescription: String? {
         switch self {
         case .invalidURL:
-            return "Invalid URL"
+            return "Invalid URL - please check your network settings"
         case .networkError(let error):
             return "Network error: \(error.localizedDescription)"
         case .decodingError(let error):
-            return "Decoding error: \(error.localizedDescription)"
+            return "Data parsing error: \(error.localizedDescription)"
         case .encodingFailed:
-            return "Failed to encode request body"
+            return "Failed to encode request data"
         case .serverError(let statusCode, let message):
             return "Server error (\(statusCode)): \(message ?? "Unknown error")"
         case .unknownError:
-            return "Unknown error occurred"
+            return "An unexpected error occurred"
         }
     }
 }
@@ -91,7 +91,7 @@ class APIClient {
         parameters: Parameters? = nil,
         completion: @escaping (Result<T, Error>) -> Void
     ) {
-        request(
+        requestWithoutBody(
             endpoint,
             method: .get,
             parameters: parameters,
@@ -114,6 +114,21 @@ class APIClient {
             endpoint,
             method: .post,
             body: body,
+            completion: completion
+        )
+    }
+    
+    /// Performs a POST request without a body
+    /// - Parameters:
+    ///   - endpoint: The API endpoint path
+    ///   - completion: Completion handler with Result containing decoded response or error
+    func post<T: Decodable>(
+        _ endpoint: String,
+        completion: @escaping (Result<T, Error>) -> Void
+    ) {
+        requestWithoutBody(
+            endpoint,
+            method: .post,
             completion: completion
         )
     }
@@ -163,6 +178,25 @@ class APIClient {
     ///   - method: HTTP method
     ///   - body: Request body (will be JSON encoded)
     ///   - completion: Completion handler with Result
+    private func request<T: Decodable, B: Encodable>(
+        _ endpoint: String,
+        method: HTTPMethod,
+        body: B?,
+        completion: @escaping (Result<T, Error>) -> Void
+    ) {
+        if let body = body {
+            requestWithBody(endpoint, method: method, body: body, completion: completion)
+        } else {
+            requestWithoutBody(endpoint, method: method, completion: completion)
+        }
+    }
+
+    /// Generic request method for requests WITH body
+    /// - Parameters:
+    ///   - endpoint: The API endpoint path
+    ///   - method: HTTP method
+    ///   - body: Request body (will be JSON encoded)
+    ///   - completion: Completion handler with Result
     private func requestWithBody<T: Decodable, B: Encodable>(
         _ endpoint: String,
         method: HTTPMethod,
@@ -171,8 +205,10 @@ class APIClient {
     ) {
         // Construct full URL
         let urlString = "\(baseURL)\(endpoint)"
+        print("🌐 API Request: \(method.rawValue) \(urlString)")
 
         guard let url = URL(string: urlString) else {
+            print("❌ Invalid URL: \(urlString)")
             completion(.failure(APIError.invalidURL))
             return
         }
@@ -180,9 +216,12 @@ class APIClient {
         // Encode body to JSON
         guard let bodyData = try? encoder.encode(body),
               let bodyDict = try? JSONSerialization.jsonObject(with: bodyData) as? [String: Any] else {
+            print("❌ Failed to encode request body")
             completion(.failure(APIError.encodingFailed))
             return
         }
+
+        print("📤 Request body: \(bodyDict)")
 
         // Make request
         AF.request(
@@ -194,10 +233,21 @@ class APIClient {
         )
         .validate()
         .responseDecodable(of: T.self, decoder: decoder) { response in
+            print("📥 Response status: \(response.response?.statusCode ?? -1)")
+
+            if let data = response.data, let responseString = String(data: data, encoding: .utf8) {
+                print("📥 Response body: \(responseString)")
+            }
+
             switch response.result {
             case .success(let value):
+                print("✅ Request succeeded")
                 completion(.success(value))
             case .failure(let error):
+                print("❌ Request failed: \(error)")
+                if let data = response.data, let errorString = String(data: data, encoding: .utf8) {
+                    print("❌ Error response: \(errorString)")
+                }
                 completion(.failure(self.mapAFError(error)))
             }
         }

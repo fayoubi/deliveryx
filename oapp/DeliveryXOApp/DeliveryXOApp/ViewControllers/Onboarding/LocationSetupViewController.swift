@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import SVProgressHUD
 
 /// Step 2/5: Location Setup - Creates location and sets operating hours
 class LocationSetupViewController: UIViewController {
@@ -40,6 +39,10 @@ class LocationSetupViewController: UIViewController {
     /// Restaurant service for API calls
     private let restaurantService = RestaurantService.shared
 
+    /// Loading indicator view
+    private var loadingView: UIView?
+    private var activityIndicator: UIActivityIndicatorView?
+
     // MARK: - Configuration
 
     /// Configures the view controller with store ID
@@ -64,18 +67,134 @@ class LocationSetupViewController: UIViewController {
 
     /// Sets up the user interface
     private func setupUI() {
-        // TODO: Implement UI layout using Auto Layout or Storyboard
-        // - Create UIScrollView to contain all content
-        // - Add name text field with placeholder "Location Name"
-        // - Add address text field with placeholder "Street Address"
-        // - Add city text field with placeholder "City"
-        // - Add phone text field with placeholder "Phone Number (optional)"
-        // - Add section header label "Operating Hours"
-        // - Add table view for 7 days of operating hours
-        // - Add submit button with title "Continue"
-        // - Configure table view delegate and data source
-        // - Register custom cell for operating hours
-        // - Add tap gesture to dismiss keyboard
+        view.backgroundColor = .systemBackground
+
+        // Create scroll view for content
+        let scrollView = UIScrollView()
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(scrollView)
+
+        // Create content view
+        let contentView = UIView()
+        contentView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.addSubview(contentView)
+
+        // Create main stack view
+        let mainStackView = UIStackView()
+        mainStackView.axis = .vertical
+        mainStackView.spacing = 20
+        mainStackView.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(mainStackView)
+
+        // Location Name Text Field
+        nameTextField = UITextField()
+        nameTextField.placeholder = "Location Name *"
+        nameTextField.borderStyle = .roundedRect
+        nameTextField.font = UIFont.systemFont(ofSize: 16)
+        nameTextField.delegate = self
+        mainStackView.addArrangedSubview(nameTextField)
+
+        // Address Text Field
+        addressTextField = UITextField()
+        addressTextField.placeholder = "Street Address *"
+        addressTextField.borderStyle = .roundedRect
+        addressTextField.font = UIFont.systemFont(ofSize: 16)
+        addressTextField.delegate = self
+        mainStackView.addArrangedSubview(addressTextField)
+
+        // City Text Field
+        cityTextField = UITextField()
+        cityTextField.placeholder = "City *"
+        cityTextField.borderStyle = .roundedRect
+        cityTextField.font = UIFont.systemFont(ofSize: 16)
+        cityTextField.delegate = self
+        mainStackView.addArrangedSubview(cityTextField)
+
+        // Phone Text Field
+        phoneTextField = UITextField()
+        phoneTextField.placeholder = "Phone Number (optional)"
+        phoneTextField.borderStyle = .roundedRect
+        phoneTextField.font = UIFont.systemFont(ofSize: 16)
+        phoneTextField.keyboardType = .phonePad
+        phoneTextField.delegate = self
+        mainStackView.addArrangedSubview(phoneTextField)
+
+        // Operating Hours Section Label
+        let operatingHoursLabel = UILabel()
+        operatingHoursLabel.text = "Operating Hours"
+        operatingHoursLabel.font = UIFont.systemFont(ofSize: 18, weight: .semibold)
+        mainStackView.addArrangedSubview(operatingHoursLabel)
+
+        // Operating Hours Table View
+        operatingHoursTableView = UITableView()
+        operatingHoursTableView.delegate = self
+        operatingHoursTableView.dataSource = self
+        operatingHoursTableView.layer.borderColor = UIColor.systemGray4.cgColor
+        operatingHoursTableView.layer.borderWidth = 1
+        operatingHoursTableView.layer.cornerRadius = 8
+        operatingHoursTableView.isScrollEnabled = false
+        mainStackView.addArrangedSubview(operatingHoursTableView)
+
+        // Submit Button
+        submitButton = UIButton(type: .system)
+        submitButton.setTitle("Continue", for: .normal)
+        submitButton.titleLabel?.font = UIFont.systemFont(ofSize: 18, weight: .semibold)
+        submitButton.backgroundColor = .systemGreen
+        submitButton.setTitleColor(.white, for: .normal)
+        submitButton.layer.cornerRadius = 8
+        submitButton.addTarget(self, action: #selector(submitButtonTapped), for: .touchUpInside)
+        mainStackView.addArrangedSubview(submitButton)
+
+        // Set up constraints
+        NSLayoutConstraint.activate([
+            // Scroll View
+            scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+
+            // Content View
+            contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+            contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+            contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+            contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+            contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
+
+            // Main Stack View
+            mainStackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 20),
+            mainStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
+            mainStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
+            mainStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -20),
+
+            // Text Field Heights
+            nameTextField.heightAnchor.constraint(equalToConstant: 44),
+            addressTextField.heightAnchor.constraint(equalToConstant: 44),
+            cityTextField.heightAnchor.constraint(equalToConstant: 44),
+            phoneTextField.heightAnchor.constraint(equalToConstant: 44),
+
+            // Operating Hours Table View Height (7 rows * 44 height)
+            operatingHoursTableView.heightAnchor.constraint(equalToConstant: 308),
+
+            // Submit Button Height
+            submitButton.heightAnchor.constraint(equalToConstant: 50)
+        ])
+
+        // Add tap gesture to dismiss keyboard
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        view.addGestureRecognizer(tapGesture)
+
+        // Safety check: Verify all UI elements are properly initialized
+        guard nameTextField != nil,
+              addressTextField != nil,
+              cityTextField != nil,
+              phoneTextField != nil,
+              operatingHoursTableView != nil,
+              submitButton != nil else {
+            print("Error: Failed to initialize all UI elements")
+            return
+        }
+
+        print("LocationSetup UI setup completed successfully")
     }
 
     /// Sets up default operating hours (9:00 AM - 9:00 PM, all days open)
@@ -95,6 +214,16 @@ class LocationSetupViewController: UIViewController {
     /// Validates the location setup form
     /// - Returns: True if form is valid, false otherwise
     private func validateForm() -> Bool {
+        // Safety check: Ensure UI elements are initialized
+        guard let nameTextField = nameTextField,
+              let addressTextField = addressTextField,
+              let cityTextField = cityTextField,
+              let phoneTextField = phoneTextField else {
+            print("Error: UI elements not properly initialized")
+            showAlert(title: "Error", message: "Form is not properly initialized")
+            return false
+        }
+
         guard let name = nameTextField.text?.trimmingCharacters(in: .whitespaces),
               !name.isEmpty else {
             showAlert(title: "Validation Error", message: "Location name is required")
@@ -113,11 +242,16 @@ class LocationSetupViewController: UIViewController {
             return false
         }
 
-        // TODO: Add more validation rules
-        // - Validate phone number format if provided
-        // - Validate operating hours times format
-        // - Ensure at least one day is open
-        // - Validate open time is before close time
+        // Validate phone number format if provided
+        if let phone = phoneTextField.text?.trimmingCharacters(in: .whitespaces),
+           !phone.isEmpty {
+            let phoneRegex = Constants.Validation.phonePattern
+            let phonePredicate = NSPredicate(format: "SELF MATCHES %@", phoneRegex)
+            if !phonePredicate.evaluate(with: phone) {
+                showAlert(title: "Validation Error", message: "Please enter a valid phone number")
+                return false
+            }
+        }
 
         return true
     }
@@ -130,16 +264,37 @@ class LocationSetupViewController: UIViewController {
         createLocationAndSetHours()
     }
 
+    /// Dismisses the keyboard
+    @objc private func dismissKeyboard() {
+        view.endEditing(true)
+    }
+
     // MARK: - API Integration
 
     /// Creates location and then sets operating hours
     private func createLocationAndSetHours() {
-        SVProgressHUD.show(withStatus: "Creating location...")
+        // Safety check: Ensure UI elements are initialized
+        guard let nameTextField = nameTextField,
+              let addressTextField = addressTextField,
+              let cityTextField = cityTextField,
+              let phoneTextField = phoneTextField else {
+            showAlert(title: "Error", message: "Form is not properly initialized")
+            return
+        }
+
+        // Safety check: Ensure restaurant service is available
+        guard restaurantService != nil else {
+            showAlert(title: "Error", message: "Restaurant service is not available")
+            return
+        }
+
+        showLoading("Creating location...")
 
         guard let name = nameTextField.text?.trimmingCharacters(in: .whitespaces),
               let address = addressTextField.text?.trimmingCharacters(in: .whitespaces),
               let city = cityTextField.text?.trimmingCharacters(in: .whitespaces) else {
-            SVProgressHUD.dismiss()
+            hideLoading()
+            showAlert(title: "Error", message: "Please fill in all required fields")
             return
         }
 
@@ -167,7 +322,7 @@ class LocationSetupViewController: UIViewController {
                     self?.setOperatingHours(locationID: location.id)
 
                 case .failure(let error):
-                    SVProgressHUD.dismiss()
+                    self?.hideLoading()
                     self?.showAlert(
                         title: "Error",
                         message: "Failed to create location: \(error.localizedDescription)"
@@ -180,7 +335,7 @@ class LocationSetupViewController: UIViewController {
     /// Sets operating hours for the location
     /// - Parameter locationID: The ID of the created location
     private func setOperatingHours(locationID: String) {
-        SVProgressHUD.setStatus("Setting operating hours...")
+        showLoading("Setting operating hours...")
 
         let hours = DayOfWeek.allCases.compactMap { operatingHoursData[$0] }
 
@@ -189,7 +344,7 @@ class LocationSetupViewController: UIViewController {
             hours: hours
         ) { [weak self] result in
             DispatchQueue.main.async {
-                SVProgressHUD.dismiss()
+                self?.hideLoading()
 
                 switch result {
                 case .success:
@@ -212,21 +367,86 @@ class LocationSetupViewController: UIViewController {
     /// Navigates to Collection Selection screen
     /// - Parameter locationID: The ID of the created location
     private func navigateToCollectionSelection(locationID: String) {
+        // Safety check: Ensure locationID is valid
+        guard !locationID.isEmpty else {
+            showAlert(title: "Error", message: "Invalid location ID")
+            return
+        }
+
+        // Safety check: Ensure navigation controller is available
+        guard let navigationController = navigationController else {
+            showAlert(title: "Error", message: "Navigation is not available")
+            return
+        }
+
         let collectionSelectionVC = CollectionSelectionViewController()
         collectionSelectionVC.configure(locationID: locationID)
-        navigationController?.pushViewController(collectionSelectionVC, animated: true)
+        navigationController.pushViewController(collectionSelectionVC, animated: true)
     }
 
     // MARK: - Helper Methods
+
+    /// Shows loading indicator with message
+    /// - Parameter message: Loading message to display
+    private func showLoading(_ message: String = "Loading...") {
+        // Remove existing loading view if any
+        hideLoading()
+
+        let loading = UIView(frame: view.bounds)
+        loading.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+
+        let indicator = UIActivityIndicatorView(style: .large)
+        indicator.color = .white
+        indicator.translatesAutoresizingMaskIntoConstraints = false
+        loading.addSubview(indicator)
+
+        let label = UILabel()
+        label.text = message
+        label.textColor = .white
+        label.font = UIFont.systemFont(ofSize: 16)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        loading.addSubview(label)
+
+        NSLayoutConstraint.activate([
+            indicator.centerXAnchor.constraint(equalTo: loading.centerXAnchor),
+            indicator.centerYAnchor.constraint(equalTo: loading.centerYAnchor, constant: -20),
+            label.centerXAnchor.constraint(equalTo: loading.centerXAnchor),
+            label.topAnchor.constraint(equalTo: indicator.bottomAnchor, constant: 16)
+        ])
+
+        view.addSubview(loading)
+        indicator.startAnimating()
+
+        loadingView = loading
+        activityIndicator = indicator
+    }
+
+    /// Hides the loading indicator
+    private func hideLoading() {
+        activityIndicator?.stopAnimating()
+        loadingView?.removeFromSuperview()
+        loadingView = nil
+        activityIndicator = nil
+    }
 
     /// Shows an alert with title and message
     /// - Parameters:
     ///   - title: Alert title
     ///   - message: Alert message
     private func showAlert(title: String, message: String) {
+        // Safety check: Ensure we can present the alert
+        guard presentedViewController == nil else {
+            print("Warning: Cannot present alert, another view controller is being presented")
+            return
+        }
+
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default))
-        present(alert, animated: true)
+
+        // Present on main thread to avoid threading issues
+        DispatchQueue.main.async { [weak self] in
+            self?.present(alert, animated: true)
+        }
     }
 }
 
@@ -271,5 +491,14 @@ extension LocationSetupViewController: UITableViewDelegate {
         // TODO: Show time picker or detailed edit screen for operating hours
         // - Allow user to set open time, close time, or mark as closed
         // - Update operatingHoursData when done
+    }
+}
+
+// MARK: - UITextFieldDelegate
+
+extension LocationSetupViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
     }
 }

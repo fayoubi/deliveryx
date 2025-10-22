@@ -38,6 +38,9 @@ class RestaurantService {
         request: CreateStoreRequest,
         completion: @escaping (Result<Store, Error>) -> Void
     ) {
+        print("🔵 DEBUG: RestaurantService.createStore() called")
+        print("  Request: name=\(request.name), email=\(request.email)")
+        print("  API URL: \(apiClient.baseURL)/stores")
         apiClient.post("/stores", body: request, completion: completion)
     }
 

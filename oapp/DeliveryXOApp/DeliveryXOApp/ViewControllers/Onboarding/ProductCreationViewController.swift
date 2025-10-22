@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import SVProgressHUD
 
 /// Step 4/5: Product Creation - Creates products and adds them to menu
 class ProductCreationViewController: UIViewController {
@@ -97,29 +96,203 @@ class ProductCreationViewController: UIViewController {
 
     /// Sets up the user interface
     private func setupUI() {
-        // TODO: Implement UI layout using Auto Layout or Storyboard
-        // - Create UIScrollView to contain form
-        // - Add name text field with placeholder "Product Name"
-        // - Add description text view with placeholder "Description (optional)"
-        // - Add price text field with placeholder "Price" (numeric keyboard)
-        // - Add category picker or button to select collection
-        // - Add photo upload button with title "Upload Photo (optional)"
-        // - Add photo image view to preview selected image
-        // - Add "Add Sample" button for quick testing
-        // - Add "Add Product" button
-        // - Add table view showing added products
-        // - Add "Finish Adding Products" button at bottom
-        // - Configure picker delegate
-        // - Add tap gesture to dismiss keyboard
+        // Scroll view for form
+        let scrollView = UIScrollView()
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.keyboardDismissMode = .interactive
+        view.addSubview(scrollView)
+
+        let contentView = UIView()
+        contentView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.addSubview(contentView)
+
+        // Name text field
+        nameTextField = UITextField()
+        nameTextField.placeholder = "Product Name"
+        nameTextField.borderStyle = .roundedRect
+        nameTextField.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(nameTextField)
+
+        // Description text view
+        descriptionTextView = UITextView()
+        descriptionTextView.font = .systemFont(ofSize: 16)
+        descriptionTextView.layer.borderColor = UIColor.systemGray4.cgColor
+        descriptionTextView.layer.borderWidth = 1
+        descriptionTextView.layer.cornerRadius = 8
+        descriptionTextView.translatesAutoresizingMaskIntoConstraints = false
+        descriptionTextView.text = "Description (optional)"
+        descriptionTextView.textColor = .placeholderText
+        descriptionTextView.delegate = self
+        contentView.addSubview(descriptionTextView)
+
+        // Price text field
+        priceTextField = UITextField()
+        priceTextField.placeholder = "Price"
+        priceTextField.borderStyle = .roundedRect
+        priceTextField.keyboardType = .decimalPad
+        priceTextField.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(priceTextField)
+
+        // Category picker
+        categoryPickerView = UIPickerView()
+        categoryPickerView.translatesAutoresizingMaskIntoConstraints = false
+        categoryPickerView.delegate = self
+        categoryPickerView.dataSource = self
+        contentView.addSubview(categoryPickerView)
+
+        // Photo upload button
+        uploadPhotoButton = UIButton(type: .system)
+        uploadPhotoButton.setTitle("Upload Photo (optional)", for: .normal)
+        uploadPhotoButton.backgroundColor = .systemGray6
+        uploadPhotoButton.layer.cornerRadius = 8
+        uploadPhotoButton.translatesAutoresizingMaskIntoConstraints = false
+        uploadPhotoButton.addTarget(self, action: #selector(uploadPhotoButtonTapped), for: .touchUpInside)
+        contentView.addSubview(uploadPhotoButton)
+
+        // Photo image view
+        photoImageView = UIImageView()
+        photoImageView.contentMode = .scaleAspectFill
+        photoImageView.clipsToBounds = true
+        photoImageView.layer.cornerRadius = 8
+        photoImageView.backgroundColor = .systemGray6
+        photoImageView.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(photoImageView)
+
+        // Add Sample button
+        addSampleButton = UIButton(type: .system)
+        addSampleButton.setTitle("Add Sample", for: .normal)
+        addSampleButton.backgroundColor = .systemGray5
+        addSampleButton.setTitleColor(.label, for: .normal)
+        addSampleButton.layer.cornerRadius = 8
+        addSampleButton.translatesAutoresizingMaskIntoConstraints = false
+        addSampleButton.addTarget(self, action: #selector(addSampleButtonTapped), for: .touchUpInside)
+        contentView.addSubview(addSampleButton)
+
+        // Add Product button
+        addProductButton = UIButton(type: .system)
+        addProductButton.setTitle("Add Product", for: .normal)
+        addProductButton.titleLabel?.font = .systemFont(ofSize: 18, weight: .semibold)
+        addProductButton.backgroundColor = .systemBlue
+        addProductButton.setTitleColor(.white, for: .normal)
+        addProductButton.layer.cornerRadius = 12
+        addProductButton.translatesAutoresizingMaskIntoConstraints = false
+        addProductButton.addTarget(self, action: #selector(addProductButtonTapped), for: .touchUpInside)
+        contentView.addSubview(addProductButton)
+
+        // Products table view
+        productsTableView = UITableView()
+        productsTableView.translatesAutoresizingMaskIntoConstraints = false
+        productsTableView.delegate = self
+        productsTableView.dataSource = self
+        contentView.addSubview(productsTableView)
+
+        // Finish button
+        finishButton = UIButton(type: .system)
+        finishButton.setTitle("Finish Adding Products", for: .normal)
+        finishButton.titleLabel?.font = .systemFont(ofSize: 18, weight: .semibold)
+        finishButton.backgroundColor = .systemGreen
+        finishButton.setTitleColor(.white, for: .normal)
+        finishButton.layer.cornerRadius = 12
+        finishButton.translatesAutoresizingMaskIntoConstraints = false
+        finishButton.addTarget(self, action: #selector(finishButtonTapped), for: .touchUpInside)
+        view.addSubview(finishButton)
+
+        // Layout constraints
+        let safeArea = view.safeAreaLayoutGuide
+
+        NSLayoutConstraint.activate([
+            // Scroll view
+            scrollView.topAnchor.constraint(equalTo: safeArea.topAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: finishButton.topAnchor, constant: -16),
+
+            // Content view
+            contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+            contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+            contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+            contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+            contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
+
+            // Name field
+            nameTextField.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 20),
+            nameTextField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
+            nameTextField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
+            nameTextField.heightAnchor.constraint(equalToConstant: 44),
+
+            // Description text view
+            descriptionTextView.topAnchor.constraint(equalTo: nameTextField.bottomAnchor, constant: 16),
+            descriptionTextView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
+            descriptionTextView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
+            descriptionTextView.heightAnchor.constraint(equalToConstant: 80),
+
+            // Price field
+            priceTextField.topAnchor.constraint(equalTo: descriptionTextView.bottomAnchor, constant: 16),
+            priceTextField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
+            priceTextField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
+            priceTextField.heightAnchor.constraint(equalToConstant: 44),
+
+            // Category picker
+            categoryPickerView.topAnchor.constraint(equalTo: priceTextField.bottomAnchor, constant: 16),
+            categoryPickerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
+            categoryPickerView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
+            categoryPickerView.heightAnchor.constraint(equalToConstant: 120),
+
+            // Photo upload button
+            uploadPhotoButton.topAnchor.constraint(equalTo: categoryPickerView.bottomAnchor, constant: 16),
+            uploadPhotoButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
+            uploadPhotoButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
+            uploadPhotoButton.heightAnchor.constraint(equalToConstant: 44),
+
+            // Photo image view
+            photoImageView.topAnchor.constraint(equalTo: uploadPhotoButton.bottomAnchor, constant: 16),
+            photoImageView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            photoImageView.widthAnchor.constraint(equalToConstant: 120),
+            photoImageView.heightAnchor.constraint(equalToConstant: 120),
+
+            // Add Sample button
+            addSampleButton.topAnchor.constraint(equalTo: photoImageView.bottomAnchor, constant: 16),
+            addSampleButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
+            addSampleButton.widthAnchor.constraint(equalToConstant: 120),
+            addSampleButton.heightAnchor.constraint(equalToConstant: 44),
+
+            // Add Product button
+            addProductButton.topAnchor.constraint(equalTo: photoImageView.bottomAnchor, constant: 16),
+            addProductButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
+            addProductButton.leadingAnchor.constraint(equalTo: addSampleButton.trailingAnchor, constant: 16),
+            addProductButton.heightAnchor.constraint(equalToConstant: 44),
+
+            // Products table view
+            productsTableView.topAnchor.constraint(equalTo: addProductButton.bottomAnchor, constant: 20),
+            productsTableView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
+            productsTableView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
+            productsTableView.heightAnchor.constraint(equalToConstant: 200),
+            productsTableView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -20),
+
+            // Finish button
+            finishButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            finishButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            finishButton.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -20),
+            finishButton.heightAnchor.constraint(equalToConstant: 50)
+        ])
+
+        // Tap gesture to dismiss keyboard
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tapGesture.cancelsTouchesInView = false
+        view.addGestureRecognizer(tapGesture)
+    }
+
+    @objc private func dismissKeyboard() {
+        view.endEditing(true)
     }
 
     /// Loads available collections from menu
     private func loadAvailableCollections() {
-        SVProgressHUD.show(withStatus: "Loading collections...")
+        print("Loading: Loading collections...")
 
         menuService.getMenu(menuID: menuID) { [weak self] result in
             DispatchQueue.main.async {
-                SVProgressHUD.dismiss()
+                print("Loading dismissed")
 
                 switch result {
                 case .success(let completeMenu):
@@ -222,7 +395,7 @@ class ProductCreationViewController: UIViewController {
     /// Uploads product photo and then creates product
     /// - Parameter photo: The product photo to upload
     private func uploadPhotoAndCreateProduct(photo: UIImage) {
-        SVProgressHUD.show(withStatus: "Uploading photo...")
+        print("Loading: Uploading photo...")
 
         let fileName = "product-photo-\(UUID().uuidString)"
 
@@ -234,7 +407,7 @@ class ProductCreationViewController: UIViewController {
                     self?.createProduct()
 
                 case .failure(let error):
-                    SVProgressHUD.dismiss()
+                    print("Loading dismissed")
                     self?.showAlert(
                         title: "Upload Failed",
                         message: "Failed to upload photo: \(error.localizedDescription)"
@@ -246,13 +419,13 @@ class ProductCreationViewController: UIViewController {
 
     /// Creates the product via API
     private func createProduct() {
-        SVProgressHUD.show(withStatus: "Creating product...")
+        print("Loading: Creating product...")
 
         guard let name = nameTextField.text?.trimmingCharacters(in: .whitespaces),
               let priceText = priceTextField.text?.trimmingCharacters(in: .whitespaces),
               let price = Double(priceText),
               let collectionName = selectedCollectionName else {
-            SVProgressHUD.dismiss()
+            print("Loading dismissed")
             return
         }
 
@@ -274,7 +447,7 @@ class ProductCreationViewController: UIViewController {
                     self?.addProductToMenu(product: product, collectionName: collectionName)
 
                 case .failure(let error):
-                    SVProgressHUD.dismiss()
+                    print("Loading dismissed")
                     self?.showAlert(
                         title: "Error",
                         message: "Failed to create product: \(error.localizedDescription)"
@@ -289,10 +462,10 @@ class ProductCreationViewController: UIViewController {
     ///   - product: The created product
     ///   - collectionName: The collection to add the product to
     private func addProductToMenu(product: Product, collectionName: CollectionName) {
-        SVProgressHUD.setStatus("Adding to menu...")
+        print("Loading: Adding to menu...")
 
         guard let collection = availableCollections.first(where: { $0.name == collectionName }) else {
-            SVProgressHUD.dismiss()
+            print("Loading dismissed")
             showAlert(title: "Error", message: "Collection not found")
             return
         }
@@ -309,7 +482,7 @@ class ProductCreationViewController: UIViewController {
             request: request
         ) { [weak self] result in
             DispatchQueue.main.async {
-                SVProgressHUD.dismiss()
+                print("Loading dismissed")
 
                 switch result {
                 case .success:
@@ -430,5 +603,33 @@ extension ProductCreationViewController: UITableViewDataSource {
         cell.detailTextLabel?.text = "\(collection.rawValue) - $\(String(format: "%.2f", product.basePrice))"
 
         return cell
+    }
+}
+
+// MARK: - UITableViewDelegate
+
+extension ProductCreationViewController: UITableViewDelegate {
+
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
+}
+
+// MARK: - UITextViewDelegate
+
+extension ProductCreationViewController: UITextViewDelegate {
+
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        if textView.textColor == .placeholderText {
+            textView.text = nil
+            textView.textColor = .label
+        }
+    }
+
+    func textViewDidEndEditing(_ textView: UITextView) {
+        if textView.text.isEmpty {
+            textView.text = "Description (optional)"
+            textView.textColor = .placeholderText
+        }
     }
 }

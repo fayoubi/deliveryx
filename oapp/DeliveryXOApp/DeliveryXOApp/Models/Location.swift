@@ -11,21 +11,21 @@ import Foundation
 struct Location: Codable, Identifiable {
     let id: String
     let storeId: String
-    let name: String
+    let name: String?
     let address: String
     let city: String
     let state: String?
     let postalCode: String?
-    let country: String
+    let country: String?
     let latitude: Double?
     let longitude: Double?
     let phone: String?
-    let isActive: Bool
+    let isActive: Bool?
     let createdAt: Date
     let updatedAt: Date
 
     enum CodingKeys: String, CodingKey {
-        case id
+        case id = "location_id"
         case storeId = "store_id"
         case name
         case address
@@ -75,22 +75,22 @@ struct CreateLocationRequest: Codable {
 struct LocationWithHours: Codable, Identifiable {
     let id: String
     let storeId: String
-    let name: String
+    let name: String?
     let address: String
     let city: String
     let state: String?
     let postalCode: String?
-    let country: String
+    let country: String?
     let latitude: Double?
     let longitude: Double?
     let phone: String?
-    let isActive: Bool
+    let isActive: Bool?
     let createdAt: Date
     let updatedAt: Date
     let operatingHours: [OperatingHour]
 
     enum CodingKeys: String, CodingKey {
-        case id
+        case id = "location_id"
         case storeId = "store_id"
         case name
         case address

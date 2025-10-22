@@ -26,19 +26,17 @@ struct Collection: Codable, Identifiable {
     let id: String
     let menuId: String
     let name: CollectionName
-    let description: String?
-    let displayOrder: Int
-    let isActive: Bool
+    let position: Int?
+    let imageUrl: String?
     let createdAt: Date
     let updatedAt: Date
 
     enum CodingKeys: String, CodingKey {
-        case id
+        case id = "collection_id"
         case menuId = "menu_id"
         case name
-        case description
-        case displayOrder = "display_order"
-        case isActive = "is_active"
+        case position
+        case imageUrl = "image_url"
         case createdAt = "created_at"
         case updatedAt = "updated_at"
     }
@@ -49,20 +47,18 @@ struct CollectionWithProducts: Codable, Identifiable {
     let id: String
     let menuId: String
     let name: CollectionName
-    let description: String?
-    let displayOrder: Int
-    let isActive: Bool
+    let position: Int?
+    let imageUrl: String?
     let createdAt: Date
     let updatedAt: Date
     let products: [ProductInMenu]
 
     enum CodingKeys: String, CodingKey {
-        case id
+        case id = "collection_id"
         case menuId = "menu_id"
         case name
-        case description
-        case displayOrder = "display_order"
-        case isActive = "is_active"
+        case position
+        case imageUrl = "image_url"
         case createdAt = "created_at"
         case updatedAt = "updated_at"
         case products
@@ -72,14 +68,12 @@ struct CollectionWithProducts: Codable, Identifiable {
 /// Request model for creating a new collection
 struct CreateCollectionRequest: Codable {
     let name: CollectionName
-    let description: String?
-    let displayOrder: Int?
-    let isActive: Bool?
+    let position: Int?
+    let imageUrl: String?
 
     enum CodingKeys: String, CodingKey {
         case name
-        case description
-        case displayOrder = "display_order"
-        case isActive = "is_active"
+        case position
+        case imageUrl = "image_url"
     }
 }

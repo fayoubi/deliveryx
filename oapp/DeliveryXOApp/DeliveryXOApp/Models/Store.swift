@@ -11,7 +11,7 @@ import Foundation
 struct Store: Codable, Identifiable {
     let id: String
     let name: String
-    let email: String
+    let email: String?
     let phone: String?
     let description: String?
     let logoUrl: String?
@@ -19,7 +19,7 @@ struct Store: Codable, Identifiable {
     let updatedAt: Date
 
     enum CodingKeys: String, CodingKey {
-        case id
+        case id = "store_id"
         case name
         case email
         case phone

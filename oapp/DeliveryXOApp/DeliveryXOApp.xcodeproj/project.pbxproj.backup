@@ -7,14 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1E09802B145E89015F73F55A /* Pods_DeliveryXOApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2E120CBF1BAA2E31A00CC5E3 /* Pods_DeliveryXOApp.framework */; };
+		54A3A364F4795B73E843F574 /* Pods_DeliveryXOApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C0A6CD6BF677555ECF28EFD /* Pods_DeliveryXOApp.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		283553A22949B56F6E7FB728 /* Pods-DeliveryXOApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DeliveryXOApp.release.xcconfig"; path = "Target Support Files/Pods-DeliveryXOApp/Pods-DeliveryXOApp.release.xcconfig"; sourceTree = "<group>"; };
-		2E120CBF1BAA2E31A00CC5E3 /* Pods_DeliveryXOApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DeliveryXOApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		0C0A6CD6BF677555ECF28EFD /* Pods_DeliveryXOApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DeliveryXOApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		618F466783267127471C578C /* Pods-DeliveryXOApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DeliveryXOApp.debug.xcconfig"; path = "Target Support Files/Pods-DeliveryXOApp/Pods-DeliveryXOApp.debug.xcconfig"; sourceTree = "<group>"; };
+		7BD0C10CF8E9EA797D16726F /* Pods-DeliveryXOApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DeliveryXOApp.release.xcconfig"; path = "Target Support Files/Pods-DeliveryXOApp/Pods-DeliveryXOApp.release.xcconfig"; sourceTree = "<group>"; };
 		8B5E1C942EA7CF0C00FBE741 /* DeliveryXOApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DeliveryXOApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		CC396934E0755534215C1075 /* Pods-DeliveryXOApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DeliveryXOApp.debug.xcconfig"; path = "Target Support Files/Pods-DeliveryXOApp/Pods-DeliveryXOApp.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -43,20 +43,30 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1E09802B145E89015F73F55A /* Pods_DeliveryXOApp.framework in Frameworks */,
+				54A3A364F4795B73E843F574 /* Pods_DeliveryXOApp.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		354090CD947813BF08BD5A1D /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				618F466783267127471C578C /* Pods-DeliveryXOApp.debug.xcconfig */,
+				7BD0C10CF8E9EA797D16726F /* Pods-DeliveryXOApp.release.xcconfig */,
+			);
+			name = Pods;
+			path = Pods;
+			sourceTree = "<group>";
+		};
 		8B5E1C8B2EA7CF0C00FBE741 = {
 			isa = PBXGroup;
 			children = (
 				8B5E1C962EA7CF0C00FBE741 /* DeliveryXOApp */,
 				8B5E1C952EA7CF0C00FBE741 /* Products */,
-				CE2DE1C3A03DA3A94F8F9AF5 /* Pods */,
-				A714069A6BD30CFEED3BEF73 /* Frameworks */,
+				354090CD947813BF08BD5A1D /* Pods */,
+				F309467FF02822FBCB7783DD /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -68,21 +78,12 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		A714069A6BD30CFEED3BEF73 /* Frameworks */ = {
+		F309467FF02822FBCB7783DD /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				2E120CBF1BAA2E31A00CC5E3 /* Pods_DeliveryXOApp.framework */,
+				0C0A6CD6BF677555ECF28EFD /* Pods_DeliveryXOApp.framework */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		CE2DE1C3A03DA3A94F8F9AF5 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				CC396934E0755534215C1075 /* Pods-DeliveryXOApp.debug.xcconfig */,
-				283553A22949B56F6E7FB728 /* Pods-DeliveryXOApp.release.xcconfig */,
-			);
-			path = Pods;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -91,13 +92,12 @@
 		8B5E1C932EA7CF0C00FBE741 /* DeliveryXOApp */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 8B5E1CA72EA7CF1000FBE741 /* Build configuration list for PBXNativeTarget "DeliveryXOApp" */;
-			buildPhases = (
-				A468A27F9E9B9BCFC0E77F55 /* [CP] Check Pods Manifest.lock */,
-				8B5E1C902EA7CF0C00FBE741 /* Sources */,
-				8B5E1C912EA7CF0C00FBE741 /* Frameworks */,
-				8B5E1C922EA7CF0C00FBE741 /* Resources */,
-				A9452262C4E045EC173B02A2 /* [CP] Copy Pods Resources */,
-			);
+                        buildPhases = (
+                                27903A696F4AD994E5E3B8DC /* [CP] Check Pods Manifest.lock */,
+                                8B5E1C902EA7CF0C00FBE741 /* Sources */,
+                                8B5E1C912EA7CF0C00FBE741 /* Frameworks */,
+                                8B5E1C922EA7CF0C00FBE741 /* Resources */,
+                        );
 			buildRules = (
 			);
 			dependencies = (
@@ -155,7 +155,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		A468A27F9E9B9BCFC0E77F55 /* [CP] Check Pods Manifest.lock */ = {
+		27903A696F4AD994E5E3B8DC /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -177,27 +177,6 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		A9452262C4E045EC173B02A2 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-DeliveryXOApp/Pods-DeliveryXOApp-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-DeliveryXOApp/Pods-DeliveryXOApp-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-DeliveryXOApp/Pods-DeliveryXOApp-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -213,7 +192,7 @@
 /* Begin XCBuildConfiguration section */
 		8B5E1CA82EA7CF1000FBE741 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CC396934E0755534215C1075 /* Pods-DeliveryXOApp.debug.xcconfig */;
+			baseConfigurationReference = 618F466783267127471C578C /* Pods-DeliveryXOApp.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -224,6 +203,7 @@
 				INFOPLIST_FILE = DeliveryXOApp/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -245,7 +225,7 @@
 		};
 		8B5E1CA92EA7CF1000FBE741 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 283553A22949B56F6E7FB728 /* Pods-DeliveryXOApp.release.xcconfig */;
+			baseConfigurationReference = 7BD0C10CF8E9EA797D16726F /* Pods-DeliveryXOApp.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -256,6 +236,7 @@
 				INFOPLIST_FILE = DeliveryXOApp/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (

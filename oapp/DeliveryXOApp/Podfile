@@ -2,8 +2,8 @@
 platform :ios, '15.0'
 
 target 'DeliveryXOApp' do
-  # Comment the next line if you don't want to use dynamic frameworks
-  use_frameworks!
+  # Use static frameworks to avoid rsync/code signing issues
+  use_frameworks! :linkage => :static
 
   # Networking
   pod 'Alamofire', '~> 5.8'
@@ -17,11 +17,9 @@ target 'DeliveryXOApp' do
   # Auto Layout
   pod 'SnapKit', '~> 5.6'
 
-  # Progress HUD
-  pod 'SVProgressHUD', '~> 2.3'
-
-  # Image Picker
-  pod 'YPImagePicker', '~> 5.3'
+  # Note: Removed SVProgressHUD - using built-in UIActivityIndicatorView instead
+  # Note: Removed YPImagePicker - using built-in UIImagePickerController instead
+  # Both had resource bundle issues with static frameworks
 
 end
 
@@ -29,6 +27,21 @@ post_install do |installer|
   installer.pods_project.targets.each do |target|
     target.build_configurations.each do |config|
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.0'
+
+      # Fix for static frameworks - disable resource bundle copying
+      # Resources are already embedded in static frameworks
+      config.build_settings['DISABLE_RESOURCE_SCRIPT'] = 'YES'
+    end
+  end
+
+  # Remove the problematic resource copying build phase
+  installer.pods_project.targets.each do |target|
+    if target.name == 'Pods-DeliveryXOApp'
+      target.build_phases.each do |build_phase|
+        if build_phase.respond_to?(:name) && build_phase.name == '[CP] Copy Pods Resources'
+          target.build_phases.delete(build_phase)
+        end
+      end
     end
   end
 end

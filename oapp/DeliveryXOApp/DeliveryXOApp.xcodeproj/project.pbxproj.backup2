@@ -82,6 +82,7 @@
 				CC396934E0755534215C1075 /* Pods-DeliveryXOApp.debug.xcconfig */,
 				283553A22949B56F6E7FB728 /* Pods-DeliveryXOApp.release.xcconfig */,
 			);
+			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -185,13 +186,9 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-DeliveryXOApp/Pods-DeliveryXOApp-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			inputPaths = (
-			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-DeliveryXOApp/Pods-DeliveryXOApp-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;

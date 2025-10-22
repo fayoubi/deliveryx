@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import SVProgressHUD
 
 /// Step 5/5: Review & Submit - Reviews complete menu and submits for publishing
 class ReviewSubmitViewController: UIViewController {
@@ -21,6 +20,18 @@ class ReviewSubmitViewController: UIViewController {
 
     /// Submit button
     private var submitButton: UIButton!
+
+    /// Header view with menu summary
+    private var headerView: UIView!
+
+    /// Menu name label
+    private var menuNameLabel: UILabel!
+
+    /// Collections count label
+    private var collectionsCountLabel: UILabel!
+
+    /// Products count label
+    private var productsCountLabel: UILabel!
 
     /// The complete menu data
     private var completeMenu: CompleteMenu?
@@ -52,26 +63,148 @@ class ReviewSubmitViewController: UIViewController {
 
     /// Sets up the user interface
     private func setupUI() {
-        // TODO: Implement UI layout using Auto Layout or Storyboard
-        // - Add header section showing menu summary
-        //   - Menu name
-        //   - Total collections count
-        //   - Total products count
-        // - Add table view for displaying collections and products
-        //   - Use sections for collections
-        //   - Show products in each section
-        // - Add submit button with title "Submit Menu for Publishing"
-        // - Style table view cells appropriately
-        // - Configure table view delegate and data source
+        // Header view with summary
+        headerView = UIView()
+        headerView.backgroundColor = .systemBackground
+        headerView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(headerView)
+
+        // Menu name label
+        menuNameLabel = UILabel()
+        menuNameLabel.font = .systemFont(ofSize: 24, weight: .bold)
+        menuNameLabel.textAlignment = .center
+        menuNameLabel.numberOfLines = 0
+        menuNameLabel.text = "Menu"
+        menuNameLabel.translatesAutoresizingMaskIntoConstraints = false
+        headerView.addSubview(menuNameLabel)
+
+        // Stats stack view
+        let statsStackView = UIStackView()
+        statsStackView.axis = .horizontal
+        statsStackView.distribution = .fillEqually
+        statsStackView.spacing = 16
+        statsStackView.translatesAutoresizingMaskIntoConstraints = false
+        headerView.addSubview(statsStackView)
+
+        // Collections count
+        let collectionsContainer = createStatContainer(title: "Collections", value: "0")
+        collectionsCountLabel = collectionsContainer.valueLabel
+        statsStackView.addArrangedSubview(collectionsContainer.view)
+
+        // Products count
+        let productsContainer = createStatContainer(title: "Products", value: "0")
+        productsCountLabel = productsContainer.valueLabel
+        statsStackView.addArrangedSubview(productsContainer.view)
+
+        // Separator
+        let separator = UIView()
+        separator.backgroundColor = .separator
+        separator.translatesAutoresizingMaskIntoConstraints = false
+        headerView.addSubview(separator)
+
+        // Table view
+        menuTableView = UITableView(frame: .zero, style: .grouped)
+        menuTableView.translatesAutoresizingMaskIntoConstraints = false
+        menuTableView.delegate = self
+        menuTableView.dataSource = self
+        view.addSubview(menuTableView)
+
+        // Submit button
+        submitButton = UIButton(type: .system)
+        submitButton.setTitle("Submit Menu for Publishing", for: .normal)
+        submitButton.titleLabel?.font = .systemFont(ofSize: 18, weight: .semibold)
+        submitButton.backgroundColor = .systemGreen
+        submitButton.setTitleColor(.white, for: .normal)
+        submitButton.layer.cornerRadius = 12
+        submitButton.translatesAutoresizingMaskIntoConstraints = false
+        submitButton.addTarget(self, action: #selector(submitButtonTapped), for: .touchUpInside)
+        view.addSubview(submitButton)
+
+        // Layout constraints
+        let safeArea = view.safeAreaLayoutGuide
+
+        NSLayoutConstraint.activate([
+            // Header view
+            headerView.topAnchor.constraint(equalTo: safeArea.topAnchor),
+            headerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            headerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+
+            // Menu name
+            menuNameLabel.topAnchor.constraint(equalTo: headerView.topAnchor, constant: 16),
+            menuNameLabel.leadingAnchor.constraint(equalTo: headerView.leadingAnchor, constant: 20),
+            menuNameLabel.trailingAnchor.constraint(equalTo: headerView.trailingAnchor, constant: -20),
+
+            // Stats stack
+            statsStackView.topAnchor.constraint(equalTo: menuNameLabel.bottomAnchor, constant: 16),
+            statsStackView.leadingAnchor.constraint(equalTo: headerView.leadingAnchor, constant: 20),
+            statsStackView.trailingAnchor.constraint(equalTo: headerView.trailingAnchor, constant: -20),
+
+            // Separator
+            separator.topAnchor.constraint(equalTo: statsStackView.bottomAnchor, constant: 16),
+            separator.leadingAnchor.constraint(equalTo: headerView.leadingAnchor),
+            separator.trailingAnchor.constraint(equalTo: headerView.trailingAnchor),
+            separator.heightAnchor.constraint(equalToConstant: 1),
+            separator.bottomAnchor.constraint(equalTo: headerView.bottomAnchor),
+
+            // Table view
+            menuTableView.topAnchor.constraint(equalTo: headerView.bottomAnchor),
+            menuTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            menuTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            menuTableView.bottomAnchor.constraint(equalTo: submitButton.topAnchor, constant: -16),
+
+            // Submit button
+            submitButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            submitButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            submitButton.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -20),
+            submitButton.heightAnchor.constraint(equalToConstant: 50)
+        ])
+    }
+
+    /// Creates a stat container view with title and value labels
+    /// - Parameters:
+    ///   - title: The title label text
+    ///   - value: The initial value
+    /// - Returns: Tuple containing the container view and value label
+    private func createStatContainer(title: String, value: String) -> (view: UIView, valueLabel: UILabel) {
+        let container = UIView()
+        container.backgroundColor = .systemGray6
+        container.layer.cornerRadius = 8
+
+        let titleLabel = UILabel()
+        titleLabel.text = title
+        titleLabel.font = .systemFont(ofSize: 14, weight: .regular)
+        titleLabel.textColor = .secondaryLabel
+        titleLabel.textAlignment = .center
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        container.addSubview(titleLabel)
+
+        let valueLabel = UILabel()
+        valueLabel.text = value
+        valueLabel.font = .systemFont(ofSize: 28, weight: .bold)
+        valueLabel.textAlignment = .center
+        valueLabel.translatesAutoresizingMaskIntoConstraints = false
+        container.addSubview(valueLabel)
+
+        NSLayoutConstraint.activate([
+            valueLabel.centerXAnchor.constraint(equalTo: container.centerXAnchor),
+            valueLabel.centerYAnchor.constraint(equalTo: container.centerYAnchor, constant: -8),
+
+            titleLabel.topAnchor.constraint(equalTo: valueLabel.bottomAnchor, constant: 4),
+            titleLabel.centerXAnchor.constraint(equalTo: container.centerXAnchor),
+
+            container.heightAnchor.constraint(equalToConstant: 80)
+        ])
+
+        return (container, valueLabel)
     }
 
     /// Loads the complete menu with all collections and products
     private func loadCompleteMenu() {
-        SVProgressHUD.show(withStatus: "Loading menu...")
+        print("Loading: Loading menu...")
 
         menuService.getMenu(menuID: menuID) { [weak self] result in
             DispatchQueue.main.async {
-                SVProgressHUD.dismiss()
+                print("Loading dismissed")
 
                 switch result {
                 case .success(let menu):
@@ -91,11 +224,17 @@ class ReviewSubmitViewController: UIViewController {
 
     /// Updates the menu summary display
     private func updateSummary() {
-        // TODO: Update UI labels showing:
-        // - Menu name
-        // - Number of collections
-        // - Total number of products
-        // - Menu status
+        guard let menu = completeMenu else { return }
+
+        // Update menu name (using first collection's restaurant or just "Menu")
+        menuNameLabel.text = "Menu"
+
+        // Update collections count
+        collectionsCountLabel.text = "\(menu.collections.count)"
+
+        // Calculate total products
+        let totalProducts = menu.collections.reduce(0) { $0 + $1.products.count }
+        productsCountLabel.text = "\(totalProducts)"
     }
 
     // MARK: - Actions
@@ -138,11 +277,11 @@ class ReviewSubmitViewController: UIViewController {
 
     /// Submits the menu for publishing
     private func submitMenu() {
-        SVProgressHUD.show(withStatus: "Submitting menu...")
+        print("Loading: Submitting menu...")
 
         menuService.submitMenu(menuID: menuID) { [weak self] result in
             DispatchQueue.main.async {
-                SVProgressHUD.dismiss()
+                print("Loading dismissed")
 
                 switch result {
                 case .success(let response):

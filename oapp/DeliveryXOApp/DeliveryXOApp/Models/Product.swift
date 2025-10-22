@@ -20,7 +20,7 @@ struct Product: Codable, Identifiable {
     let updatedAt: Date
 
     enum CodingKeys: String, CodingKey {
-        case id
+        case id = "product_id"
         case storeId = "store_id"
         case name
         case description
@@ -51,7 +51,7 @@ struct ProductInMenu: Codable, Identifiable {
     let menuProductUpdatedAt: Date
 
     enum CodingKeys: String, CodingKey {
-        case id
+        case id = "product_id"
         case storeId = "store_id"
         case name
         case description

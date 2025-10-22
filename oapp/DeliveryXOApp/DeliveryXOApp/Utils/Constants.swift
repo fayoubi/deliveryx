@@ -13,7 +13,7 @@ struct Constants {
     // MARK: - API Configuration
 
     struct API {
-        /// Base URL for the API server
+        /// Base URL for the API server (Traefik gateway on port 80)
         static let baseURL = "http://localhost/api/v1"
 
         /// Default request timeout in seconds

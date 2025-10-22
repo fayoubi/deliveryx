@@ -30,7 +30,7 @@ struct OperatingHour: Codable, Identifiable {
     let updatedAt: Date
 
     enum CodingKeys: String, CodingKey {
-        case id
+        case id = "operating_hour_id"
         case locationId = "location_id"
         case dayOfWeek = "day_of_week"
         case openTime = "open_time"
