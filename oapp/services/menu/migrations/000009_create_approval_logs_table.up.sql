@@ -8,7 +8,8 @@ CREATE TABLE IF NOT EXISTS approval_logs (
     admin_id UUID,
     admin_email VARCHAR(255),
     rejection_reason TEXT,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_approval_logs_menu_id FOREIGN KEY (menu_id) REFERENCES menus(menu_id) ON DELETE CASCADE
 );
 
 -- Create index on menu_id for lookups

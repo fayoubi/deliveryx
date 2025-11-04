@@ -111,7 +111,6 @@
     <div class="tabs">
         <button class="tab active" onclick="switchTab('restaurant')">Restaurant Service</button>
         <button class="tab" onclick="switchTab('menu')">Menu Service</button>
-        <button class="tab" onclick="switchTab('approval')">Approval Service</button>
         <button class="tab" onclick="switchTab('media')">Media Service</button>
     </div>
 
@@ -121,8 +120,7 @@
         <p><strong>Direct Service Access:</strong></p>
         <ul>
             <li>Restaurant Service: <code>http://localhost:8081/api/v1</code></li>
-            <li>Menu Service: <code>http://localhost:8082/api/v1</code></li>
-            <li>Approval Service: <code>http://localhost:8083/api/v1/approvals</code></li>
+            <li>Menu Service: <code>http://localhost:8082/api/v1</code> (includes approval endpoints)</li>
             <li>Media Service: <code>http://localhost:8084/api/v1/media</code></li>
         </ul>
     </div>
@@ -133,10 +131,6 @@
 
     <div id="menu-content" class="content">
         <div id="swagger-ui-menu"></div>
-    </div>
-
-    <div id="approval-content" class="content">
-        <div id="swagger-ui-approval"></div>
     </div>
 
     <div id="media-content" class="content">
@@ -164,20 +158,6 @@
         const menuUI = SwaggerUIBundle({
             url: '/specs/menu-service.yaml',
             dom_id: '#swagger-ui-menu',
-            deepLinking: true,
-            presets: [
-                SwaggerUIBundle.presets.apis,
-                SwaggerUIStandalonePreset
-            ],
-            plugins: [
-                SwaggerUIBundle.plugins.DownloadUrl
-            ],
-            layout: "StandaloneLayout"
-        });
-
-        const approvalUI = SwaggerUIBundle({
-            url: '/specs/approval-service.yaml',
-            dom_id: '#swagger-ui-approval',
             deepLinking: true,
             presets: [
                 SwaggerUIBundle.presets.apis,

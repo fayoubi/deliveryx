@@ -135,3 +135,85 @@ func (r *StoreRepository) Update(storeID string, req *models.UpdateStoreRequest)
 
 	return store, nil
 }
+
+// List retrieves a paginated, filtered, and sorted list of stores
+func (r *StoreRepository) List(filters FilterParams, pagination PaginationParams, sort SortParams) ([]models.Store, int, error) {
+	// Build query arguments
+	args := []interface{}{}
+
+	// Build WHERE clause
+	whereClause := BuildWhereClauseStores(filters, &args)
+
+	// Count total for pagination
+	countQuery := "SELECT COUNT(*) FROM stores" + whereClause
+	var total int
+	err := r.db.QueryRow(countQuery, args...).Scan(&total)
+	if err != nil {
+		return nil, 0, fmt.Errorf("failed to count stores: %w", err)
+	}
+
+	// Build ORDER BY clause
+	orderByClause := BuildOrderByClause(sort, "")
+
+	// Build pagination clause
+	paginationClause := BuildPaginationClause(pagination)
+
+	// Build full query
+	query := `
+		SELECT store_id, name, description, logo_url, phone, created_at, updated_at
+		FROM stores
+	` + whereClause + orderByClause + paginationClause
+
+	rows, err := r.db.Query(query, args...)
+	if err != nil {
+		return nil, 0, fmt.Errorf("failed to list stores: %w", err)
+	}
+	defer rows.Close()
+
+	stores := []models.Store{}
+	for rows.Next() {
+		var store models.Store
+		err := rows.Scan(
+			&store.StoreID,
+			&store.Name,
+			&store.Description,
+			&store.LogoURL,
+			&store.Phone,
+			&store.CreatedAt,
+			&store.UpdatedAt,
+		)
+		if err != nil {
+			return nil, 0, fmt.Errorf("failed to scan store: %w", err)
+		}
+		stores = append(stores, store)
+	}
+
+	return stores, total, nil
+}
+
+// CountLocations counts the number of locations for a store
+func (r *StoreRepository) CountLocations(storeID string) (int, error) {
+	var count int
+	query := "SELECT COUNT(*) FROM locations WHERE store_id = $1"
+	err := r.db.QueryRow(query, storeID).Scan(&count)
+	if err != nil {
+		return 0, fmt.Errorf("failed to count locations: %w", err)
+	}
+	return count, nil
+}
+
+// Delete deletes a store (should be called after checking for locations)
+func (r *StoreRepository) Delete(storeID string) error {
+	query := "DELETE FROM stores WHERE store_id = $1"
+	result, err := r.db.Exec(query, storeID)
+	if err != nil {
+		return fmt.Errorf("failed to delete store: %w", err)
+	}
+
+	rows, _ := result.RowsAffected()
+	if rows == 0 {
+		return fmt.Errorf("store not found")
+	}
+
+	return nil
+}

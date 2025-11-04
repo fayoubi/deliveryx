@@ -53,7 +53,6 @@ Password: deliveryx_dev_pass
 |-----------------------|-------------------|----------------------------------------------|
 | `deliveryx_restaurant`| Restaurant Service| Stores, locations, operating hours           |
 | `deliveryx_menu`      | Menu Service      | Menus, products, collections, attribute groups|
-| `deliveryx_approval`  | Approval Service  | Approval logs, audit trail                   |
 
 ---
 

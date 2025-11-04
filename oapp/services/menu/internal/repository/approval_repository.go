@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/deliveryx/approval-service/internal/models"
+	"github.com/deliveryx/menu-service/internal/models"
 	"github.com/google/uuid"
 )
 
