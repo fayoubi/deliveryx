@@ -23,6 +23,56 @@ tags:
 
 paths:
   /stores:
+    get:
+      tags:
+        - Stores
+      summary: List all stores
+      operationId: listStores
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+        - name: page_size
+          in: query
+          schema:
+            type: integer
+            default: 20
+            minimum: 1
+            maximum: 100
+        - name: sort
+          in: query
+          description: Sort field (prefix with - for descending)
+          schema:
+            type: string
+            enum: [name, -name, created_at, -created_at]
+            default: name
+        - name: q
+          in: query
+          description: Search stores by name (case-insensitive)
+          schema:
+            type: string
+        - name: phone
+          in: query
+          description: Filter by exact phone number
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Paginated list of stores
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedStoresResponse'
+        '400':
+          description: Invalid pagination/sort/filter parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+
     post:
       tags:
         - Stores
@@ -46,7 +96,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ApiError'
 
   /stores/{store_id}:
     get:
@@ -73,7 +123,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ApiError'
 
     put:
       tags:
@@ -105,9 +155,104 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ApiError'
+
+    delete:
+      tags:
+        - Stores
+      summary: Delete a store
+      operationId: deleteStore
+      parameters:
+        - name: store_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Store deleted successfully
+        '404':
+          description: Store not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        '409':
+          description: Store cannot be deleted - has locations
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+              example:
+                message: "Store cannot be deleted while it has locations"
+                code: "STORE_HAS_LOCATIONS"
+                details:
+                  locations_count: 3
 
   /stores/{store_id}/locations:
+    get:
+      tags:
+        - Locations
+      summary: List all locations for a store
+      operationId: listLocations
+      parameters:
+        - name: store_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+        - name: page_size
+          in: query
+          schema:
+            type: integer
+            default: 20
+            minimum: 1
+            maximum: 100
+        - name: sort
+          in: query
+          description: Sort field (prefix with - for descending)
+          schema:
+            type: string
+            enum: [city, -city, created_at, -created_at]
+            default: city
+        - name: city
+          in: query
+          description: Filter by exact city name
+          schema:
+            type: string
+        - name: q
+          in: query
+          description: Search locations by address (case-insensitive substring)
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Paginated list of locations
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedLocationsResponse'
+        '404':
+          description: Store not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        '400':
+          description: Invalid pagination/sort/filter parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+
     post:
       tags:
         - Locations
@@ -138,7 +283,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ApiError'
 
   /locations/{location_id}:
     get:
@@ -165,7 +310,84 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ApiError'
+
+    put:
+      tags:
+        - Locations
+      summary: Update location details
+      operationId: updateLocation
+      parameters:
+        - name: location_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateLocationRequest'
+      responses:
+        '200':
+          description: Location updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Location'
+        '404':
+          description: Location not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        '400':
+          description: Validation errors
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+
+    delete:
+      tags:
+        - Locations
+      summary: Delete a location
+      operationId: deleteLocation
+      parameters:
+        - name: location_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Location deleted successfully
+        '404':
+          description: Location not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        '409':
+          description: Location cannot be deleted - has menus
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+              example:
+                message: "Location cannot be deleted while it has menus"
+                code: "LOCATION_HAS_MENUS"
+                details:
+                  menus_count: 2
+        '503':
+          description: Menu service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
 
   /locations/{location_id}/operating-hours:
     put:
@@ -204,7 +426,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ApiError'
 
 components:
   schemas:
@@ -376,8 +598,86 @@ components:
         is_closed:
           type: boolean
 
-    Error:
+    UpdateLocationRequest:
       type: object
       properties:
-        error:
+        address:
           type: string
+        city:
+          type: string
+          maxLength: 100
+        postal_code:
+          type: string
+          maxLength: 20
+        phone:
+          type: string
+        location_manager:
+          type: string
+          maxLength: 255
+        latitude:
+          type: number
+          format: double
+          minimum: -90
+          maximum: 90
+        longitude:
+          type: number
+          format: double
+          minimum: -180
+          maximum: 180
+
+    PaginatedStoresResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Store'
+        page:
+          type: integer
+        page_size:
+          type: integer
+        total:
+          type: integer
+        has_next:
+          type: boolean
+
+    PaginatedLocationsResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Location'
+        page:
+          type: integer
+        page_size:
+          type: integer
+        total:
+          type: integer
+        has_next:
+          type: boolean
+
+    ApiError:
+      type: object
+      required:
+        - message
+        - code
+      properties:
+        message:
+          type: string
+          description: Human-readable error message
+        code:
+          type: string
+          description: Machine-readable error code
+          enum:
+            - VALIDATION_ERROR
+            - NOT_FOUND
+            - STORE_HAS_LOCATIONS
+            - LOCATION_HAS_MENUS
+            - INTERNAL_ERROR
+            - INVALID_REQUEST
+            - SERVICE_UNAVAILABLE
+        details:
+          type: object
+          additionalProperties: true
+          description: Additional error details

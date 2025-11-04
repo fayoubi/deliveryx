@@ -1,8 +1,6 @@
-Epic: Admin PortalFrontend
+## Epic: Admin-Portal Frontend ##
 
-# Story: Admin Portal – Restaurant Management UI (Stores & Locations CRUD)
-
-**Epic:** Restaurant Service Frontend  
+**Story:** Admin Portal – Restaurant Management UI (Stores & Locations CRUD)
 **Story Type:** Feature  
 **Priority:** High
 

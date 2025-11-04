@@ -179,3 +179,157 @@ func (r *LocationRepository) GetOperatingHours(locationID string) ([]models.Oper
 
 	return hours, nil
 }
+
+// List retrieves a paginated, filtered, and sorted list of locations for a store
+func (r *LocationRepository) List(storeID string, filters FilterParams, pagination PaginationParams, sort SortParams) ([]models.Location, int, error) {
+	// Build query arguments
+	args := []interface{}{}
+
+	// Build WHERE clause (includes store_id filter)
+	whereClause := BuildWhereClauseLocations(storeID, filters, &args)
+
+	// Count total for pagination
+	countQuery := "SELECT COUNT(*) FROM locations" + whereClause
+	var total int
+	err := r.db.QueryRow(countQuery, args...).Scan(&total)
+	if err != nil {
+		return nil, 0, fmt.Errorf("failed to count locations: %w", err)
+	}
+
+	// Build ORDER BY clause with tie-breaker
+	orderByClause := BuildOrderByClause(sort, "address")
+
+	// Build pagination clause
+	paginationClause := BuildPaginationClause(pagination)
+
+	// Build full query
+	query := `
+		SELECT location_id, store_id, address, city, postal_code, phone,
+		       location_manager, latitude, longitude, created_at, updated_at
+		FROM locations
+	` + whereClause + orderByClause + paginationClause
+
+	rows, err := r.db.Query(query, args...)
+	if err != nil {
+		return nil, 0, fmt.Errorf("failed to list locations: %w", err)
+	}
+	defer rows.Close()
+
+	locations := []models.Location{}
+	for rows.Next() {
+		var location models.Location
+		err := rows.Scan(
+			&location.LocationID,
+			&location.StoreID,
+			&location.Address,
+			&location.City,
+			&location.PostalCode,
+			&location.Phone,
+			&location.LocationManager,
+			&location.Latitude,
+			&location.Longitude,
+			&location.CreatedAt,
+			&location.UpdatedAt,
+		)
+		if err != nil {
+			return nil, 0, fmt.Errorf("failed to scan location: %w", err)
+		}
+		locations = append(locations, location)
+	}
+
+	return locations, total, nil
+}
+
+// Update updates a location (partial update)
+func (r *LocationRepository) Update(locationID string, req *models.UpdateLocationRequest) (*models.Location, error) {
+	// First check if location exists
+	location, err := r.GetByID(locationID)
+	if err != nil {
+		return nil, err
+	}
+
+	// Build dynamic update query
+	query := `UPDATE locations SET `
+	args := []interface{}{}
+	argCount := 1
+
+	if req.Address != nil {
+		query += fmt.Sprintf("address = $%d, ", argCount)
+		args = append(args, *req.Address)
+		argCount++
+	}
+
+	if req.City != nil {
+		query += fmt.Sprintf("city = $%d, ", argCount)
+		args = append(args, *req.City)
+		argCount++
+	}
+
+	if req.PostalCode != nil {
+		query += fmt.Sprintf("postal_code = $%d, ", argCount)
+		args = append(args, *req.PostalCode)
+		argCount++
+	}
+
+	if req.Phone != nil {
+		query += fmt.Sprintf("phone = $%d, ", argCount)
+		args = append(args, *req.Phone)
+		argCount++
+	}
+
+	if req.LocationManager != nil {
+		query += fmt.Sprintf("location_manager = $%d, ", argCount)
+		args = append(args, *req.LocationManager)
+		argCount++
+	}
+
+	if req.Latitude != nil {
+		query += fmt.Sprintf("latitude = $%d, ", argCount)
+		args = append(args, *req.Latitude)
+		argCount++
+	}
+
+	if req.Longitude != nil {
+		query += fmt.Sprintf("longitude = $%d, ", argCount)
+		args = append(args, *req.Longitude)
+		argCount++
+	}
+
+	// Remove trailing comma and space, add WHERE clause
+	query = query[:len(query)-2] + fmt.Sprintf(" WHERE location_id = $%d RETURNING address, city, postal_code, phone, location_manager, latitude, longitude, created_at, updated_at", argCount)
+	args = append(args, locationID)
+
+	err = r.db.QueryRow(query, args...).Scan(
+		&location.Address,
+		&location.City,
+		&location.PostalCode,
+		&location.Phone,
+		&location.LocationManager,
+		&location.Latitude,
+		&location.Longitude,
+		&location.CreatedAt,
+		&location.UpdatedAt,
+	)
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to update location: %w", err)
+	}
+
+	return location, nil
+}
+
+// Delete deletes a location (should be called after checking for menus via menu service)
+func (r *LocationRepository) Delete(locationID string) error {
+	query := "DELETE FROM locations WHERE location_id = $1"
+	result, err := r.db.Exec(query, locationID)
+	if err != nil {
+		return fmt.Errorf("failed to delete location: %w", err)
+	}
+
+	rows, _ := result.RowsAffected()
+	if rows == 0 {
+		return fmt.Errorf("location not found")
+	}
+
+	return nil
+}

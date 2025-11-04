@@ -34,6 +34,17 @@ type CreateLocationRequest struct {
 	Longitude       *float64 `json:"longitude,omitempty"`
 }
 
+// UpdateLocationRequest represents the request body for updating a location (partial update)
+type UpdateLocationRequest struct {
+	Address         *string  `json:"address,omitempty"`
+	City            *string  `json:"city,omitempty" validate:"omitempty,max=100"`
+	PostalCode      *string  `json:"postal_code,omitempty" validate:"omitempty,max=20"`
+	Phone           *string  `json:"phone,omitempty" validate:"omitempty,max=20"`
+	LocationManager *string  `json:"location_manager,omitempty" validate:"omitempty,max=255"`
+	Latitude        *float64 `json:"latitude,omitempty"`
+	Longitude       *float64 `json:"longitude,omitempty"`
+}
+
 // OperatingHour represents operating hours for a specific day
 type OperatingHour struct {
 	ID         string    `json:"id,omitempty" db:"id"`

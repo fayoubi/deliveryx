@@ -149,3 +149,14 @@ func (r *MenuRepository) UpdateStatus(menuID, status string, rejectionReason *st
 
 	return nil
 }
+
+// CountByLocation counts the number of menus for a given location
+func (r *MenuRepository) CountByLocation(locationID string) (int, error) {
+	var count int
+	query := `SELECT COUNT(*) FROM menus WHERE location_id = $1`
+	err := r.db.QueryRow(query, locationID).Scan(&count)
+	if err != nil {
+		return 0, fmt.Errorf("failed to count menus: %w", err)
+	}
+	return count, nil
+}

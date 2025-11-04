@@ -1,1163 +1,2203 @@
 {
-	"info": {
-		"_postman_id": "deliveryx-api-complete-test-suite",
-		"name": "DeliveryX API - Complete Test Suite",
-		"description": "Comprehensive test suite for all DeliveryX backend services including Restaurant Service (Stores & Locations), Menu Service (Menus, Products, Collections), Approval Service, and Media Service. This collection contains 25 test requests with automated assertions and environment variable management for end-to-end testing workflows.",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-	},
-	"item": [
-		{
-			"name": "Restaurant Service",
-			"item": [
-				{
-					"name": "Create Store",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 201\", function () {",
-									"    pm.response.to.have.status(201);",
-									"});",
-									"",
-									"pm.test(\"Response has store_id\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData).to.have.property('store_id');",
-									"    pm.environment.set('store_id', jsonData.store_id);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"name\": \"Test Restaurant\",\n  \"description\": \"A test restaurant for API testing\",\n  \"logo_url\": \"https://example.com/logo.png\",\n  \"phone\": \"+1-555-0123\"\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/stores",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"stores"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Store Details",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"pm.test(\"Response contains correct store data\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData).to.have.property('store_id');",
-									"    pm.expect(jsonData).to.have.property('name');",
-									"    pm.expect(jsonData.name).to.eql('Test Restaurant');",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/stores/{{store_id}}",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"stores",
-								"{{store_id}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Update Store",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"pm.test(\"Store description was updated\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData.description).to.eql('Updated restaurant description');",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"name\": \"Test Restaurant\",\n  \"description\": \"Updated restaurant description\",\n  \"logo_url\": \"https://example.com/logo.png\",\n  \"phone\": \"+1-555-0123\"\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/stores/{{store_id}}",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"stores",
-								"{{store_id}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Create Location",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 201\", function () {",
-									"    pm.response.to.have.status(201);",
-									"});",
-									"",
-									"pm.test(\"Response has location_id\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData).to.have.property('location_id');",
-									"    pm.environment.set('location_id', jsonData.location_id);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"address\": \"123 Main Street\",\n  \"city\": \"New York\",\n  \"postal_code\": \"10001\",\n  \"phone\": \"+1-555-0124\",\n  \"location_manager\": \"John Doe\",\n  \"latitude\": 40.7128,\n  \"longitude\": -74.0060\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/stores/{{store_id}}/locations",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"stores",
-								"{{store_id}}",
-								"locations"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Location Details",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"pm.test(\"Response has operating_hours array\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData).to.have.property('operating_hours');",
-									"    pm.expect(jsonData.operating_hours).to.be.an('array');",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/locations/{{location_id}}",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"locations",
-								"{{location_id}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Set Operating Hours",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"pm.test(\"7 days of operating hours returned\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData).to.be.an('array');",
-									"    pm.expect(jsonData).to.have.lengthOf(7);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "[\n  {\"day_of_week\": \"MONDAY\", \"open_time\": \"09:00\", \"close_time\": \"22:00\", \"is_closed\": false},\n  {\"day_of_week\": \"TUESDAY\", \"open_time\": \"09:00\", \"close_time\": \"22:00\", \"is_closed\": false},\n  {\"day_of_week\": \"WEDNESDAY\", \"open_time\": \"09:00\", \"close_time\": \"22:00\", \"is_closed\": false},\n  {\"day_of_week\": \"THURSDAY\", \"open_time\": \"09:00\", \"close_time\": \"22:00\", \"is_closed\": false},\n  {\"day_of_week\": \"FRIDAY\", \"open_time\": \"09:00\", \"close_time\": \"23:00\", \"is_closed\": false},\n  {\"day_of_week\": \"SATURDAY\", \"open_time\": \"10:00\", \"close_time\": \"23:00\", \"is_closed\": false},\n  {\"day_of_week\": \"SUNDAY\", \"open_time\": \"10:00\", \"close_time\": \"21:00\", \"is_closed\": false}\n]"
-						},
-						"url": {
-							"raw": "{{base_url}}/locations/{{location_id}}/operating-hours",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"locations",
-								"{{location_id}}",
-								"operating-hours"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Menu Service",
-			"item": [
-				{
-					"name": "Create Draft Menu",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 201\", function () {",
-									"    pm.response.to.have.status(201);",
-									"});",
-									"",
-									"pm.test(\"Response has menu_id and draft status\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData).to.have.property('menu_id');",
-									"    pm.expect(jsonData.status).to.eql('draft');",
-									"    pm.environment.set('menu_id', jsonData.menu_id);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
-						"url": {
-							"raw": "{{base_url}}/locations/{{location_id}}/menus",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"locations",
-								"{{location_id}}",
-								"menus"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Menu Status",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"pm.test(\"Response has status field\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData).to.have.property('status');",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/menus/{{menu_id}}/status",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"menus",
-								"{{menu_id}}",
-								"status"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Attribute Groups",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"pm.test(\"Response has at least 3 attribute groups\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData).to.be.an('array');",
-									"    pm.expect(jsonData.length).to.be.at.least(3);",
-									"    if (jsonData.length > 0) {",
-									"        pm.environment.set('attribute_group_id', jsonData[0].id);",
-									"    }",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/attribute-groups",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"attribute-groups"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Attributes for Group",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"pm.test(\"Response is an array of attributes\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData).to.be.an('array');",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/attribute-groups/{{attribute_group_id}}/attributes",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"attribute-groups",
-								"{{attribute_group_id}}",
-								"attributes"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Add Collection to Menu",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 201\", function () {",
-									"    pm.response.to.have.status(201);",
-									"});",
-									"",
-									"pm.test(\"Response has collection_id and correct name\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData).to.have.property('collection_id');",
-									"    pm.expect(jsonData.name).to.eql('Sides');",
-									"    pm.environment.set('collection_id', jsonData.collection_id);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"name\": \"Sides\",\n  \"position\": 1,\n  \"image_url\": \"https://example.com/sides.jpg\"\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/menus/{{menu_id}}/collections",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"menus",
-								"{{menu_id}}",
-								"collections"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Create Product",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 201\", function () {",
-									"    pm.response.to.have.status(201);",
-									"});",
-									"",
-									"pm.test(\"Response has product_id and correct name\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData).to.have.property('product_id');",
-									"    pm.expect(jsonData.name).to.eql('Margherita Pizza');",
-									"    pm.environment.set('product_id', jsonData.product_id);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"name\": \"Margherita Pizza\",\n  \"description\": \"Classic pizza with tomato, mozzarella, and basil\",\n  \"price\": 12.99,\n  \"category\": \"Pizza\",\n  \"image_url\": \"https://example.com/pizza.jpg\",\n  \"attribute_group_ids\": [\"{{attribute_group_id}}\"]\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/locations/{{location_id}}/products",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"locations",
-								"{{location_id}}",
-								"products"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Product",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"pm.test(\"Response has correct price\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData.price).to.eql(12.99);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/products/{{product_id}}",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"products",
-								"{{product_id}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Update Product",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"pm.test(\"Price was updated\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData.price).to.eql(13.99);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"name\": \"Margherita Pizza\",\n  \"description\": \"Classic pizza with tomato, mozzarella, and fresh basil\",\n  \"price\": 13.99,\n  \"category\": \"Pizza\",\n  \"image_url\": \"https://example.com/pizza.jpg\",\n  \"attribute_group_ids\": [\"{{attribute_group_id}}\"]\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/products/{{product_id}}",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"products",
-								"{{product_id}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Toggle Product Availability",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"pm.test(\"Product is unavailable\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData.is_available).to.eql(false);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "PATCH",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"is_available\": false\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/products/{{product_id}}/availability",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"products",
-								"{{product_id}}",
-								"availability"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Toggle Product Availability Back On",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"pm.test(\"Product is available\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData.is_available).to.eql(true);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "PATCH",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"is_available\": true\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/products/{{product_id}}/availability",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"products",
-								"{{product_id}}",
-								"availability"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Add Product to Menu",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 201\", function () {",
-									"    pm.response.to.have.status(201);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"product_id\": \"{{product_id}}\",\n  \"collection_id\": \"{{collection_id}}\",\n  \"position\": 1\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/menus/{{menu_id}}/products",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"menus",
-								"{{menu_id}}",
-								"products"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Submit Menu for Review",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"pm.test(\"Menu status is pending_review\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData.status).to.eql('pending_review');",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/menus/{{menu_id}}/submit",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"menus",
-								"{{menu_id}}",
-								"submit"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Complete Menu",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"pm.test(\"Menu has collections and products arrays\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData).to.have.property('collections');",
-									"    pm.expect(jsonData).to.have.property('products');",
-									"    pm.expect(jsonData.collections).to.be.an('array');",
-									"    pm.expect(jsonData.products).to.be.an('array');",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/menus/{{menu_id}}",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"menus",
-								"{{menu_id}}"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Menu Approval",
-			"item": [
-				{
-					"name": "Approve Menu",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"pm.test(\"Menu status is approved\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData.status).to.eql('approved');",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "X-Admin-Email",
-								"value": "admin@deliveryx.com"
-							},
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"notes\": \"Menu approved - looks good\"\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/menus/{{menu_id}}/approve",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"menus",
-								"{{menu_id}}",
-								"approve"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Approval History",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"pm.test(\"Approval history has at least 1 entry\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData).to.be.an('array');",
-									"    pm.expect(jsonData.length).to.be.at.least(1);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/menus/{{menu_id}}/history",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"menus",
-								"{{menu_id}}",
-								"history"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Reject Menu Test",
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									"// Reset menu to draft status",
-									"const resetMenuRequest = {",
-									"    url: pm.environment.get('base_url') + '/internal/menus/' + pm.environment.get('menu_id') + '/status',",
-									"    method: 'PUT',",
-									"    header: {",
-									"        'Content-Type': 'application/json'",
-									"    },",
-									"    body: {",
-									"        mode: 'raw',",
-									"        raw: JSON.stringify({",
-									"            status: 'draft'",
-									"        })",
-									"    }",
-									"};",
-									"",
-									"pm.sendRequest(resetMenuRequest, function (err, response) {",
-									"    if (err) {",
-									"        console.log('Error resetting menu to draft:', err);",
-									"    } else {",
-									"        console.log('Menu reset to draft status');",
-									"        ",
-									"        // Submit menu for review",
-									"        const submitRequest = {",
-									"            url: pm.environment.get('base_url') + '/menus/' + pm.environment.get('menu_id') + '/submit',",
-									"            method: 'POST'",
-									"        };",
-									"        ",
-									"        pm.sendRequest(submitRequest, function (err, response) {",
-									"            if (err) {",
-									"                console.log('Error submitting menu:', err);",
-									"            } else {",
-									"                console.log('Menu submitted for review');",
-									"            }",
-									"        });",
-									"    }",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						},
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"pm.test(\"Menu status is rejected\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData.status).to.eql('rejected');",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "X-Admin-Email",
-								"value": "admin@deliveryx.com"
-							},
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"rejection_reason\": \"Menu items need better descriptions\",\n  \"notes\": \"Please provide more detailed descriptions for all products\"\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/menus/{{menu_id}}/reject",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"menus",
-								"{{menu_id}}",
-								"reject"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Media Service",
-			"item": [
-				{
-					"name": "Generate Upload URL",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"pm.test(\"Response has upload_url and file_url\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData).to.have.property('upload_url');",
-									"    pm.expect(jsonData).to.have.property('file_url');",
-									"    pm.environment.set('upload_url', jsonData.upload_url);",
-									"    pm.environment.set('file_url', jsonData.file_url);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"file_name\": \"product-image.jpg\",\n  \"content_type\": \"image/jpeg\",\n  \"file_size\": 2048000\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/media/upload-url",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"media",
-								"upload-url"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Generate Upload URL - Invalid Size",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 400\", function () {",
-									"    pm.response.to.have.status(400);",
-									"});",
-									"",
-									"pm.test(\"Error message mentions maximum file size\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData.error.toLowerCase()).to.include('exceeds maximum');",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"file_name\": \"large-file.jpg\",\n  \"content_type\": \"image/jpeg\",\n  \"file_size\": 15728640\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/media/upload-url",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"media",
-								"upload-url"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Generate Upload URL - Invalid Type",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 400\", function () {",
-									"    pm.response.to.have.status(400);",
-									"});",
-									"",
-									"pm.test(\"Error message mentions image type requirement\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData.error.toLowerCase()).to.include('image');",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"file_name\": \"document.pdf\",\n  \"content_type\": \"application/pdf\",\n  \"file_size\": 1048576\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/media/upload-url",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"media",
-								"upload-url"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		}
-	],
-	"variable": [
-		{
-			"key": "base_url",
-			"value": "http://localhost/api/v1",
-			"type": "string"
-		}
-	]
+  "info": {
+    "_postman_id": "deliveryx-api-complete-test-suite",
+    "name": "DeliveryX API - Complete Test Suite",
+    "description": "Comprehensive test suite for all DeliveryX backend services including Restaurant Service (Stores & Locations), Menu Service (Menus, Products, Collections), Approval Service, and Media Service. This collection contains 52 test requests with automated assertions and environment variable management for end-to-end testing workflows.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Restaurant Service",
+      "item": [
+        {
+          "name": "Create Store",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has store_id\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('store_id');",
+                  "    pm.environment.set('store_id', jsonData.store_id);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test Restaurant\",\n  \"description\": \"A test restaurant for API testing\",\n  \"logo_url\": \"https://example.com/logo.png\",\n  \"phone\": \"+1-555-0123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/stores",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "stores"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Store Details",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains correct store data\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('store_id');",
+                  "    pm.expect(jsonData).to.have.property('name');",
+                  "    pm.expect(jsonData.name).to.eql('Test Restaurant');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/stores/{{store_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "stores",
+                "{{store_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Store",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Store description was updated\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.description).to.eql('Updated restaurant description');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test Restaurant\",\n  \"description\": \"Updated restaurant description\",\n  \"logo_url\": \"https://example.com/logo.png\",\n  \"phone\": \"+1-555-0123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/stores/{{store_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "stores",
+                "{{store_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Location",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has location_id\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('location_id');",
+                  "    pm.environment.set('location_id', jsonData.location_id);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"address\": \"123 Main Street\",\n  \"city\": \"New York\",\n  \"postal_code\": \"10001\",\n  \"phone\": \"+1-555-0124\",\n  \"location_manager\": \"John Doe\",\n  \"latitude\": 40.7128,\n  \"longitude\": -74.0060\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/stores/{{store_id}}/locations",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "stores",
+                "{{store_id}}",
+                "locations"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Location Details",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has operating_hours array\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('operating_hours');",
+                  "    pm.expect(jsonData.operating_hours).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/locations/{{location_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "locations",
+                "{{location_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Set Operating Hours",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"7 days of operating hours returned\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.be.an('array');",
+                  "    pm.expect(jsonData).to.have.lengthOf(7);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  {\"day_of_week\": \"MONDAY\", \"open_time\": \"09:00\", \"close_time\": \"22:00\", \"is_closed\": false},\n  {\"day_of_week\": \"TUESDAY\", \"open_time\": \"09:00\", \"close_time\": \"22:00\", \"is_closed\": false},\n  {\"day_of_week\": \"WEDNESDAY\", \"open_time\": \"09:00\", \"close_time\": \"22:00\", \"is_closed\": false},\n  {\"day_of_week\": \"THURSDAY\", \"open_time\": \"09:00\", \"close_time\": \"22:00\", \"is_closed\": false},\n  {\"day_of_week\": \"FRIDAY\", \"open_time\": \"09:00\", \"close_time\": \"23:00\", \"is_closed\": false},\n  {\"day_of_week\": \"SATURDAY\", \"open_time\": \"10:00\", \"close_time\": \"23:00\", \"is_closed\": false},\n  {\"day_of_week\": \"SUNDAY\", \"open_time\": \"10:00\", \"close_time\": \"21:00\", \"is_closed\": false}\n]"
+            },
+            "url": {
+              "raw": "{{base_url}}/locations/{{location_id}}/operating-hours",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "locations",
+                "{{location_id}}",
+                "operating-hours"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List Stores - Default Pagination",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has pagination fields\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('items');",
+                  "    pm.expect(jsonData).to.have.property('page');",
+                  "    pm.expect(jsonData).to.have.property('page_size');",
+                  "    pm.expect(jsonData).to.have.property('total');",
+                  "    pm.expect(jsonData).to.have.property('has_next');",
+                  "    pm.expect(jsonData.items).to.be.an('array');",
+                  "    pm.expect(jsonData.page).to.eql(1);",
+                  "    pm.expect(jsonData.page_size).to.eql(20);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/stores",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "stores"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List Stores - Custom Pagination",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has correct pagination parameters\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.page).to.eql(2);",
+                  "    pm.expect(jsonData.page_size).to.eql(5);",
+                  "    pm.expect(jsonData.items).to.be.an('array');",
+                  "    pm.expect(jsonData.items.length).to.be.at.most(5);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/stores?page=2&page_size=5",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "stores"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "2"
+                },
+                {
+                  "key": "page_size",
+                  "value": "5"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List Stores - Sort by Name",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Stores are sorted by name ascending\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.items).to.be.an('array');",
+                  "    if (jsonData.items.length > 1) {",
+                  "        for (let i = 0; i < jsonData.items.length - 1; i++) {",
+                  "            pm.expect(jsonData.items[i].name <= jsonData.items[i + 1].name).to.be.true;",
+                  "        }",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/stores?sort=name",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "stores"
+              ],
+              "query": [
+                {
+                  "key": "sort",
+                  "value": "name"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List Stores - Sort by Created Date Desc",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Stores are sorted by creation date descending\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.items).to.be.an('array');",
+                  "    if (jsonData.items.length > 1) {",
+                  "        for (let i = 0; i < jsonData.items.length - 1; i++) {",
+                  "            var date1 = new Date(jsonData.items[i].created_at);",
+                  "            var date2 = new Date(jsonData.items[i + 1].created_at);",
+                  "            pm.expect(date1 >= date2).to.be.true;",
+                  "        }",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/stores?sort=-created_at",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "stores"
+              ],
+              "query": [
+                {
+                  "key": "sort",
+                  "value": "-created_at"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List Stores - Filter by Name Search",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"All stores match search query\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.items).to.be.an('array');",
+                  "    jsonData.items.forEach(function(store) {",
+                  "        pm.expect(store.name.toLowerCase()).to.include('test');",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/stores?q=test",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "stores"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "test"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List Stores - Filter by Phone",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"All stores match phone filter\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.items).to.be.an('array');",
+                  "    jsonData.items.forEach(function(store) {",
+                  "        pm.expect(store.phone).to.include('555');",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/stores?phone=555",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "stores"
+              ],
+              "query": [
+                {
+                  "key": "phone",
+                  "value": "555"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Store for Deletion Test",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has store_id\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('store_id');",
+                  "    pm.environment.set('store_to_delete_id', jsonData.store_id);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Store to Delete\",\n  \"description\": \"This store will be deleted\",\n  \"logo_url\": \"https://example.com/logo.png\",\n  \"phone\": \"+1-555-9999\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/stores",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "stores"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Store - Success",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 204\", function () {",
+                  "    pm.response.to.have.status(204);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/stores/{{store_to_delete_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "stores",
+                "{{store_to_delete_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Store - With Locations (409)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 409\", function () {",
+                  "    pm.response.to.have.status(409);",
+                  "});",
+                  "",
+                  "pm.test(\"Error has STORE_HAS_LOCATIONS code\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "    pm.expect(jsonData).to.have.property('code');",
+                  "    pm.expect(jsonData.code).to.eql('STORE_HAS_LOCATIONS');",
+                  "    pm.expect(jsonData).to.have.property('details');",
+                  "    pm.expect(jsonData.details).to.have.property('locations_count');",
+                  "    pm.expect(jsonData.details.locations_count).to.be.above(0);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/stores/{{store_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "stores",
+                "{{store_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Store - Not Found (404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "",
+                  "pm.test(\"Error response has proper structure\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "    pm.expect(jsonData).to.have.property('code');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/stores/non-existent-store-id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "stores",
+                "non-existent-store-id"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List Locations - Default Pagination",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has pagination fields\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('items');",
+                  "    pm.expect(jsonData).to.have.property('page');",
+                  "    pm.expect(jsonData).to.have.property('page_size');",
+                  "    pm.expect(jsonData).to.have.property('total');",
+                  "    pm.expect(jsonData).to.have.property('has_next');",
+                  "    pm.expect(jsonData.items).to.be.an('array');",
+                  "    pm.expect(jsonData.page).to.eql(1);",
+                  "    pm.expect(jsonData.page_size).to.eql(20);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/stores/{{store_id}}/locations",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "stores",
+                "{{store_id}}",
+                "locations"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List Locations - Custom Pagination",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has correct pagination parameters\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.page).to.eql(1);",
+                  "    pm.expect(jsonData.page_size).to.eql(10);",
+                  "    pm.expect(jsonData.items).to.be.an('array');",
+                  "    pm.expect(jsonData.items.length).to.be.at.most(10);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/stores/{{store_id}}/locations?page=1&page_size=10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "stores",
+                "{{store_id}}",
+                "locations"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "page_size",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List Locations - Sort by City",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Locations are sorted by city\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.items).to.be.an('array');",
+                  "    if (jsonData.items.length > 1) {",
+                  "        for (let i = 0; i < jsonData.items.length - 1; i++) {",
+                  "            pm.expect(jsonData.items[i].city <= jsonData.items[i + 1].city).to.be.true;",
+                  "        }",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/stores/{{store_id}}/locations?sort=city",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "stores",
+                "{{store_id}}",
+                "locations"
+              ],
+              "query": [
+                {
+                  "key": "sort",
+                  "value": "city"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List Locations - Filter by City",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"All locations match city filter\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.items).to.be.an('array');",
+                  "    jsonData.items.forEach(function(location) {",
+                  "        pm.expect(location.city.toLowerCase()).to.include('new york');",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/stores/{{store_id}}/locations?city=New York",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "stores",
+                "{{store_id}}",
+                "locations"
+              ],
+              "query": [
+                {
+                  "key": "city",
+                  "value": "New York"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List Locations - Filter by Address Search",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"All locations match address search\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.items).to.be.an('array');",
+                  "    jsonData.items.forEach(function(location) {",
+                  "        pm.expect(location.address.toLowerCase()).to.include('main');",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/stores/{{store_id}}/locations?q=main",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "stores",
+                "{{store_id}}",
+                "locations"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "main"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List Locations - Store Not Found (404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "",
+                  "pm.test(\"Error response has proper structure\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "    pm.expect(jsonData).to.have.property('code');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/stores/non-existent-store-id/locations",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "stores",
+                "non-existent-store-id",
+                "locations"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Location - Partial Update",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"City was updated\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('city');",
+                  "    pm.expect(jsonData.city).to.eql('Brooklyn');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"city\": \"Brooklyn\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/locations/{{location_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "locations",
+                "{{location_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Location - With Lat/Lng Validation",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Coordinates were updated\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('latitude');",
+                  "    pm.expect(jsonData).to.have.property('longitude');",
+                  "    pm.expect(jsonData.latitude).to.eql(40.6782);",
+                  "    pm.expect(jsonData.longitude).to.eql(-73.9442);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"latitude\": 40.6782,\n  \"longitude\": -73.9442\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/locations/{{location_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "locations",
+                "{{location_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Location - Empty Body (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Error has VALIDATION_ERROR code\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "    pm.expect(jsonData).to.have.property('code');",
+                  "    pm.expect(jsonData.code).to.eql('VALIDATION_ERROR');",
+                  "    pm.expect(jsonData).to.have.property('details');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": {
+              "raw": "{{base_url}}/locations/{{location_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "locations",
+                "{{location_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Location - Not Found (404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "",
+                  "pm.test(\"Error response has proper structure\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "    pm.expect(jsonData).to.have.property('code');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"city\": \"Updated City\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/locations/non-existent-location-id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "locations",
+                "non-existent-location-id"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Location for Deletion Test",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has location_id\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('location_id');",
+                  "    pm.environment.set('location_to_delete_id', jsonData.location_id);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"address\": \"456 Delete Street\",\n  \"city\": \"Test City\",\n  \"postal_code\": \"99999\",\n  \"phone\": \"+1-555-8888\",\n  \"location_manager\": \"Jane Doe\",\n  \"latitude\": 40.7580,\n  \"longitude\": -73.9855\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/stores/{{store_id}}/locations",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "stores",
+                "{{store_id}}",
+                "locations"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Location - Success",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 204\", function () {",
+                  "    pm.response.to.have.status(204);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/locations/{{location_to_delete_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "locations",
+                "{{location_to_delete_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Location - Not Found (404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "",
+                  "pm.test(\"Error response has proper structure\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "    pm.expect(jsonData).to.have.property('code');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/locations/non-existent-location-id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "locations",
+                "non-existent-location-id"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Menu Service",
+      "item": [
+        {
+          "name": "Create Draft Menu",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has menu_id and draft status\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('menu_id');",
+                  "    pm.expect(jsonData.status).to.eql('draft');",
+                  "    pm.environment.set('menu_id', jsonData.menu_id);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{base_url}}/locations/{{location_id}}/menus",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "locations",
+                "{{location_id}}",
+                "menus"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Menu Status",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has status field\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('status');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/menus/{{menu_id}}/status",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "menus",
+                "{{menu_id}}",
+                "status"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Attribute Groups",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has at least 3 attribute groups\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.be.an('array');",
+                  "    pm.expect(jsonData.length).to.be.at.least(3);",
+                  "    if (jsonData.length > 0) {",
+                  "        pm.environment.set('attribute_group_id', jsonData[0].id);",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/attribute-groups",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "attribute-groups"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Attributes for Group",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is an array of attributes\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/attribute-groups/{{attribute_group_id}}/attributes",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "attribute-groups",
+                "{{attribute_group_id}}",
+                "attributes"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add Collection to Menu",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has collection_id and correct name\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('collection_id');",
+                  "    pm.expect(jsonData.name).to.eql('Sides');",
+                  "    pm.environment.set('collection_id', jsonData.collection_id);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sides\",\n  \"position\": 1,\n  \"image_url\": \"https://example.com/sides.jpg\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/menus/{{menu_id}}/collections",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "menus",
+                "{{menu_id}}",
+                "collections"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Product",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has product_id and correct name\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('product_id');",
+                  "    pm.expect(jsonData.name).to.eql('Margherita Pizza');",
+                  "    pm.environment.set('product_id', jsonData.product_id);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Margherita Pizza\",\n  \"description\": \"Classic pizza with tomato, mozzarella, and basil\",\n  \"price\": 12.99,\n  \"category\": \"Pizza\",\n  \"image_url\": \"https://example.com/pizza.jpg\",\n  \"attribute_group_ids\": [\"{{attribute_group_id}}\"]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/locations/{{location_id}}/products",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "locations",
+                "{{location_id}}",
+                "products"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Product",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has correct price\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.price).to.eql(12.99);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products/{{product_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "products",
+                "{{product_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Product",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Price was updated\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.price).to.eql(13.99);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Margherita Pizza\",\n  \"description\": \"Classic pizza with tomato, mozzarella, and fresh basil\",\n  \"price\": 13.99,\n  \"category\": \"Pizza\",\n  \"image_url\": \"https://example.com/pizza.jpg\",\n  \"attribute_group_ids\": [\"{{attribute_group_id}}\"]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/products/{{product_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "products",
+                "{{product_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Toggle Product Availability",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Product is unavailable\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.is_available).to.eql(false);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"is_available\": false\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/products/{{product_id}}/availability",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "products",
+                "{{product_id}}",
+                "availability"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Toggle Product Availability Back On",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Product is available\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.is_available).to.eql(true);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"is_available\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/products/{{product_id}}/availability",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "products",
+                "{{product_id}}",
+                "availability"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add Product to Menu",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"product_id\": \"{{product_id}}\",\n  \"collection_id\": \"{{collection_id}}\",\n  \"position\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/menus/{{menu_id}}/products",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "menus",
+                "{{menu_id}}",
+                "products"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Submit Menu for Review",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Menu status is pending_review\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.status).to.eql('pending_review');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/menus/{{menu_id}}/submit",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "menus",
+                "{{menu_id}}",
+                "submit"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Complete Menu",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Menu has collections and products arrays\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('collections');",
+                  "    pm.expect(jsonData).to.have.property('products');",
+                  "    pm.expect(jsonData.collections).to.be.an('array');",
+                  "    pm.expect(jsonData.products).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/menus/{{menu_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "menus",
+                "{{menu_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Location - With Menus (409)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 409\", function () {",
+                  "    pm.response.to.have.status(409);",
+                  "});",
+                  "",
+                  "pm.test(\"Error has LOCATION_HAS_MENUS code\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "    pm.expect(jsonData).to.have.property('code');",
+                  "    pm.expect(jsonData.code).to.eql('LOCATION_HAS_MENUS');",
+                  "    pm.expect(jsonData).to.have.property('details');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/locations/{{location_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "locations",
+                "{{location_id}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Menu Approval",
+      "item": [
+        {
+          "name": "Approve Menu",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Menu status is approved\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.status).to.eql('approved');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Admin-Email",
+                "value": "admin@deliveryx.com"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"notes\": \"Menu approved - looks good\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/menus/{{menu_id}}/approve",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "menus",
+                "{{menu_id}}",
+                "approve"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Approval History",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Approval history has at least 1 entry\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.be.an('array');",
+                  "    pm.expect(jsonData.length).to.be.at.least(1);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/menus/{{menu_id}}/history",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "menus",
+                "{{menu_id}}",
+                "history"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Reject Menu Test",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Reset menu to draft status",
+                  "const resetMenuRequest = {",
+                  "    url: pm.environment.get('base_url') + '/internal/menus/' + pm.environment.get('menu_id') + '/status',",
+                  "    method: 'PUT',",
+                  "    header: {",
+                  "        'Content-Type': 'application/json'",
+                  "    },",
+                  "    body: {",
+                  "        mode: 'raw',",
+                  "        raw: JSON.stringify({",
+                  "            status: 'draft'",
+                  "        })",
+                  "    }",
+                  "};",
+                  "",
+                  "pm.sendRequest(resetMenuRequest, function (err, response) {",
+                  "    if (err) {",
+                  "        console.log('Error resetting menu to draft:', err);",
+                  "    } else {",
+                  "        console.log('Menu reset to draft status');",
+                  "        ",
+                  "        // Submit menu for review",
+                  "        const submitRequest = {",
+                  "            url: pm.environment.get('base_url') + '/menus/' + pm.environment.get('menu_id') + '/submit',",
+                  "            method: 'POST'",
+                  "        };",
+                  "        ",
+                  "        pm.sendRequest(submitRequest, function (err, response) {",
+                  "            if (err) {",
+                  "                console.log('Error submitting menu:', err);",
+                  "            } else {",
+                  "                console.log('Menu submitted for review');",
+                  "            }",
+                  "        });",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Menu status is rejected\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.status).to.eql('rejected');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Admin-Email",
+                "value": "admin@deliveryx.com"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rejection_reason\": \"Menu items need better descriptions\",\n  \"notes\": \"Please provide more detailed descriptions for all products\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/menus/{{menu_id}}/reject",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "menus",
+                "{{menu_id}}",
+                "reject"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Media Service",
+      "item": [
+        {
+          "name": "Generate Upload URL",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response has upload_url and file_url\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('upload_url');",
+                  "    pm.expect(jsonData).to.have.property('file_url');",
+                  "    pm.environment.set('upload_url', jsonData.upload_url);",
+                  "    pm.environment.set('file_url', jsonData.file_url);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"file_name\": \"product-image.jpg\",\n  \"content_type\": \"image/jpeg\",\n  \"file_size\": 2048000\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/media/upload-url",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "media",
+                "upload-url"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Generate Upload URL - Invalid Size",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Error message mentions maximum file size\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.error.toLowerCase()).to.include('exceeds maximum');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"file_name\": \"large-file.jpg\",\n  \"content_type\": \"image/jpeg\",\n  \"file_size\": 15728640\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/media/upload-url",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "media",
+                "upload-url"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Generate Upload URL - Invalid Type",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Error message mentions image type requirement\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.error.toLowerCase()).to.include('image');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"file_name\": \"document.pdf\",\n  \"content_type\": \"application/pdf\",\n  \"file_size\": 1048576\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/media/upload-url",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "media",
+                "upload-url"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost/api/v1",
+      "type": "string"
+    }
+  ]
 }

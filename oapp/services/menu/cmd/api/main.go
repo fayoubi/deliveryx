@@ -63,6 +63,7 @@ func main() {
 	collectionHandler := handlers.NewCollectionHandler(collectionRepo)
 	menuProductHandler := handlers.NewMenuProductHandler(menuProductRepo)
 	approvalHandler := handlers.NewApprovalHandler(approvalRepo, menuRepo)
+	internalHandler := handlers.NewInternalHandler(menuRepo)
 
 	// Setup router
 	router := mux.NewRouter()
@@ -112,6 +113,7 @@ func main() {
 	// Internal routes (for service-to-service communication)
 	internal := router.PathPrefix("/internal").Subrouter()
 	internal.HandleFunc("/menus/{menu_id}/status", menuHandler.UpdateMenuStatus).Methods("PUT")
+	internal.HandleFunc("/locations/{location_id}/has-menus", internalHandler.CheckLocationHasMenus).Methods("GET")
 
 	// Health check
 	router.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {

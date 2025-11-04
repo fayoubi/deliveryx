@@ -10,6 +10,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/deliveryx/restaurant-service/internal/client"
 	"github.com/deliveryx/restaurant-service/internal/handlers"
 	"github.com/deliveryx/restaurant-service/internal/middleware"
 	"github.com/deliveryx/restaurant-service/internal/repository"
@@ -25,6 +26,7 @@ func main() {
 	dbPass := getEnv("DB_PASSWORD", "deliveryx_dev_pass")
 	dbName := getEnv("DB_NAME", "deliveryx_restaurant")
 	serverPort := getEnv("SERVER_PORT", "8081")
+	menuServiceURL := getEnv("MENU_SERVICE_URL", "http://menu-service:8082")
 
 	// Connect to database
 	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
@@ -42,9 +44,12 @@ func main() {
 	storeRepo := repository.NewStoreRepository(db)
 	locationRepo := repository.NewLocationRepository(db)
 
+	// Initialize external clients
+	menuClient := client.NewMenuServiceClient(menuServiceURL)
+
 	// Initialize handlers
 	storeHandler := handlers.NewStoreHandler(storeRepo)
-	locationHandler := handlers.NewLocationHandler(locationRepo, storeRepo)
+	locationHandler := handlers.NewLocationHandler(locationRepo, storeRepo, menuClient)
 
 	// Setup router
 	router := mux.NewRouter()
@@ -58,13 +63,18 @@ func main() {
 	api := router.PathPrefix("/api/v1").Subrouter()
 
 	// Store routes
+	api.HandleFunc("/stores", storeHandler.ListStores).Methods("GET")
 	api.HandleFunc("/stores", storeHandler.CreateStore).Methods("POST")
 	api.HandleFunc("/stores/{store_id}", storeHandler.GetStore).Methods("GET")
 	api.HandleFunc("/stores/{store_id}", storeHandler.UpdateStore).Methods("PUT")
+	api.HandleFunc("/stores/{store_id}", storeHandler.DeleteStore).Methods("DELETE")
 
 	// Location routes
+	api.HandleFunc("/stores/{store_id}/locations", locationHandler.ListLocations).Methods("GET")
 	api.HandleFunc("/stores/{store_id}/locations", locationHandler.CreateLocation).Methods("POST")
 	api.HandleFunc("/locations/{location_id}", locationHandler.GetLocation).Methods("GET")
+	api.HandleFunc("/locations/{location_id}", locationHandler.UpdateLocation).Methods("PUT")
+	api.HandleFunc("/locations/{location_id}", locationHandler.DeleteLocation).Methods("DELETE")
 
 	// Operating hours routes
 	api.HandleFunc("/locations/{location_id}/operating-hours", locationHandler.SetOperatingHours).Methods("PUT")

@@ -170,7 +170,11 @@ These standards reflect how the Restaurant Service and similar services are expe
   - `DELETE` – Remove resources.
 - Status codes:
   - 2xx for success (200, 201, 204).
+    - 204 for deletes with no body.
   - 4xx for client errors (400, 404, 422, etc.).
+    - 400 for validation errors
+    - 404 when resource not found
+    - 409 for constraint/conflict (e.g., cannot delete due to relations)
   - 5xx for server errors.
 - Error payloads SHOULD follow a consistent structure, e.g.:
 
@@ -182,3 +186,9 @@ These standards reflect how the Restaurant Service and similar services are expe
       "...": "..."
     }
   }
+
+## 4. Extras and Misc
+(Not implemented)
+- IDs are UUIDv4 strings.
+- Timestamps returned in ISO‑8601 UTC.
+- Prices should be in money cents at all time.
