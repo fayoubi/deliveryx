@@ -13,7 +13,13 @@ type ApprovalLog struct {
 	CreatedAt       time.Time `json:"created_at" db:"created_at"`
 }
 
+// ApproveMenuRequest represents the request to approve a menu
+type ApproveMenuRequest struct {
+	Notes string `json:"notes,omitempty"`
+}
+
 // RejectMenuRequest represents the request to reject a menu
 type RejectMenuRequest struct {
 	RejectionReason string `json:"rejection_reason" validate:"required"`
+	Notes           string `json:"notes,omitempty"`
 }

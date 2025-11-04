@@ -4,25 +4,24 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/deliveryx/approval-service/internal/client"
-	"github.com/deliveryx/approval-service/internal/models"
-	"github.com/deliveryx/approval-service/internal/repository"
+	"github.com/deliveryx/menu-service/internal/models"
+	"github.com/deliveryx/menu-service/internal/repository"
 	"github.com/gorilla/mux"
 )
 
 type ApprovalHandler struct {
 	approvalRepo *repository.ApprovalRepository
-	menuClient   *client.MenuClient
+	menuRepo     *repository.MenuRepository
 }
 
-func NewApprovalHandler(approvalRepo *repository.ApprovalRepository, menuClient *client.MenuClient) *ApprovalHandler {
+func NewApprovalHandler(approvalRepo *repository.ApprovalRepository, menuRepo *repository.MenuRepository) *ApprovalHandler {
 	return &ApprovalHandler{
 		approvalRepo: approvalRepo,
-		menuClient:   menuClient,
+		menuRepo:     menuRepo,
 	}
 }
 
-// ApproveMenu handles menu approval
+// ApproveMenu handles POST /api/v1/menus/{menu_id}/approve
 func (h *ApprovalHandler) ApproveMenu(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	menuID := vars["menu_id"]
@@ -34,27 +33,26 @@ func (h *ApprovalHandler) ApproveMenu(w http.ResponseWriter, r *http.Request) {
 		adminEmailPtr = &adminEmail
 	}
 
-	// Update menu status in Menu Service
-	if err := h.menuClient.UpdateMenuStatus(menuID, "approved", nil); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+	// Update menu status to approved
+	if err := h.menuRepo.UpdateStatus(menuID, "approved", nil); err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
 	// Log approval action
 	if err := h.approvalRepo.LogApproval(menuID, adminEmailPtr); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(map[string]string{
+	respondWithJSON(w, http.StatusOK, map[string]string{
 		"message": "Menu approved successfully",
 		"menu_id": menuID,
 		"status":  "approved",
 	})
 }
 
-// RejectMenu handles menu rejection
+// RejectMenu handles POST /api/v1/menus/{menu_id}/reject
 func (h *ApprovalHandler) RejectMenu(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	menuID := vars["menu_id"]
@@ -62,13 +60,13 @@ func (h *ApprovalHandler) RejectMenu(w http.ResponseWriter, r *http.Request) {
 	// Parse request body
 	var req models.RejectMenuRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		respondWithError(w, http.StatusBadRequest, "Invalid request body")
 		return
 	}
 
 	// Validate rejection reason
 	if req.RejectionReason == "" {
-		http.Error(w, "Rejection reason is required", http.StatusBadRequest)
+		respondWithError(w, http.StatusBadRequest, "Rejection reason is required")
 		return
 	}
 
@@ -79,20 +77,19 @@ func (h *ApprovalHandler) RejectMenu(w http.ResponseWriter, r *http.Request) {
 		adminEmailPtr = &adminEmail
 	}
 
-	// Update menu status in Menu Service
-	if err := h.menuClient.UpdateMenuStatus(menuID, "rejected", &req.RejectionReason); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+	// Update menu status to rejected
+	if err := h.menuRepo.UpdateStatus(menuID, "rejected", &req.RejectionReason); err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
 	// Log rejection action
 	if err := h.approvalRepo.LogRejection(menuID, req.RejectionReason, adminEmailPtr); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(map[string]string{
+	respondWithJSON(w, http.StatusOK, map[string]string{
 		"message":          "Menu rejected successfully",
 		"menu_id":          menuID,
 		"status":           "rejected",
@@ -100,17 +97,16 @@ func (h *ApprovalHandler) RejectMenu(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// GetApprovalHistory returns approval history for a menu
+// GetApprovalHistory handles GET /api/v1/menus/{menu_id}/history
 func (h *ApprovalHandler) GetApprovalHistory(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	menuID := vars["menu_id"]
 
 	logs, err := h.approvalRepo.GetApprovalHistory(menuID)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(logs)
+	respondWithJSON(w, http.StatusOK, logs)
 }

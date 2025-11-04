@@ -54,6 +54,7 @@ func main() {
 	productRepo := repository.NewProductRepository(db)
 	collectionRepo := repository.NewCollectionRepository(db)
 	menuProductRepo := repository.NewMenuProductRepository(db)
+	approvalRepo := repository.NewApprovalRepository(db)
 
 	// Initialize handlers
 	menuHandler := handlers.NewMenuHandler(menuRepo, menuRetrievalRepo, queueClient)
@@ -61,6 +62,7 @@ func main() {
 	productHandler := handlers.NewProductHandler(productRepo)
 	collectionHandler := handlers.NewCollectionHandler(collectionRepo)
 	menuProductHandler := handlers.NewMenuProductHandler(menuProductRepo)
+	approvalHandler := handlers.NewApprovalHandler(approvalRepo, menuRepo)
 
 	// Setup router
 	router := mux.NewRouter()
@@ -101,6 +103,11 @@ func main() {
 
 	// Epic 7: Complete menu retrieval
 	api.HandleFunc("/menus/{menu_id}", menuHandler.GetCompleteMenu).Methods("GET")
+
+	// Approval endpoints (migrated from Approval Service)
+	api.HandleFunc("/menus/{menu_id}/approve", approvalHandler.ApproveMenu).Methods("POST")
+	api.HandleFunc("/menus/{menu_id}/reject", approvalHandler.RejectMenu).Methods("POST")
+	api.HandleFunc("/menus/{menu_id}/history", approvalHandler.GetApprovalHistory).Methods("GET")
 
 	// Internal routes (for service-to-service communication)
 	internal := router.PathPrefix("/internal").Subrouter()

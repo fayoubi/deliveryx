@@ -14,7 +14,7 @@ This document provides SQL queries mapped to each Postman test scenario for vali
 7. [Menu Service - Products](#menu-service---products)
 8. [Menu Service - Menu Composition](#menu-service---menu-composition)
 9. [Menu Service - Workflow](#menu-service---workflow)
-10. [Approval Service](#approval-service)
+10. [Menu Approval](#menu-approval)
 11. [Cross-Database Validation](#cross-database-validation)
 
 ---
@@ -694,21 +694,18 @@ rejection_reason: NULL
 
 **RabbitMQ Validation**:
 ```sql
--- After submitting, check RabbitMQ consumer logs
--- You should see: "🎯 Processing menu-submitted event for menu_id: YOUR_MENU_ID"
-
--- Alternatively, check approval_logs table (if consumer processes it)
-\c deliveryx_approval
-SELECT * FROM approval_logs WHERE menu_id = 'YOUR_MENU_ID_HERE';
+-- After submitting, check RabbitMQ queue in management UI
+-- Queue: menu-submitted-events
+-- URL: http://localhost:15672
 ```
 
 ---
 
-## ✅ **Approval Service**
+## ✅ **Menu Approval**
 
 ### **Test 11: Approve Menu**
 
-**Postman Request**: `POST /api/v1/approvals/menus/{menu_id}/approve`
+**Postman Request**: `POST /api/v1/menus/{menu_id}/approve`
 
 **Before Query**:
 ```sql
@@ -716,14 +713,13 @@ SELECT * FROM approval_logs WHERE menu_id = 'YOUR_MENU_ID_HERE';
 \c deliveryx_menu
 SELECT menu_id, status, reviewed_at FROM menus WHERE menu_id = 'YOUR_MENU_ID_HERE';
 
--- Check approval logs in Approval Service (should be empty or show only submission)
-\c deliveryx_approval
+-- Check approval logs (should be empty or show only submission)
 SELECT * FROM approval_logs WHERE menu_id = 'YOUR_MENU_ID_HERE';
 ```
 
 **After Query**:
 ```sql
--- Verify menu status changed to approved (in Menu Service)
+-- Verify menu status changed to approved
 \c deliveryx_menu
 SELECT
     menu_id,
@@ -736,8 +732,7 @@ SELECT
 FROM menus
 WHERE menu_id = 'YOUR_MENU_ID_HERE';
 
--- Verify approval was logged (in Approval Service)
-\c deliveryx_approval
+-- Verify approval was logged
 SELECT
     id,
     menu_id,
@@ -750,7 +745,7 @@ WHERE menu_id = 'YOUR_MENU_ID_HERE'
 ORDER BY created_at DESC;
 ```
 
-**Expected Result (Menu Service)**:
+**Expected Result (menus table)**:
 ```
 menu_id: UUID
 status: "approved" (changed from "pending_review")
@@ -759,9 +754,9 @@ reviewed_at: timestamp (now populated)
 rejection_reason: NULL
 ```
 
-**Expected Result (Approval Service)**:
+**Expected Result (approval_logs table)**:
 ```
-id: serial ID
+id: UUID
 menu_id: UUID
 action: "approved"
 admin_email: "admin@deliveryx.com" (from X-Admin-Email header)
@@ -772,13 +767,13 @@ created_at: timestamp
 **Validation Checklist**:
 - ✅ Menu status is "approved" in deliveryx_menu database
 - ✅ reviewed_at is now populated
-- ✅ Approval log exists in deliveryx_approval database
+- ✅ Approval log exists in approval_logs table
 - ✅ action is "approved"
 - ✅ admin_email matches request header
 
 ### **Test 12: Reject Menu**
 
-**Postman Request**: `POST /api/v1/approvals/menus/{menu_id}/reject`
+**Postman Request**: `POST /api/v1/menus/{menu_id}/reject`
 
 **Before Query**:
 ```sql
@@ -802,7 +797,6 @@ FROM menus
 WHERE menu_id = 'YOUR_MENU_ID_HERE';
 
 -- Verify rejection was logged
-\c deliveryx_approval
 SELECT
     id,
     menu_id,
@@ -815,7 +809,7 @@ WHERE menu_id = 'YOUR_MENU_ID_HERE'
 ORDER BY created_at DESC LIMIT 1;
 ```
 
-**Expected Result (Menu Service)**:
+**Expected Result (menus table)**:
 ```
 menu_id: UUID
 status: "rejected" (changed from "pending_review")
@@ -824,9 +818,9 @@ reviewed_at: timestamp (now populated)
 rejection_reason: "Prices are too high" (from request body)
 ```
 
-**Expected Result (Approval Service)**:
+**Expected Result (approval_logs table)**:
 ```
-id: serial ID
+id: UUID
 menu_id: UUID
 action: "rejected"
 admin_email: "admin@deliveryx.com"
@@ -837,17 +831,17 @@ created_at: timestamp
 **Validation Checklist**:
 - ✅ Menu status is "rejected" in deliveryx_menu database
 - ✅ rejection_reason is populated in menus table
-- ✅ Rejection log exists in deliveryx_approval database
+- ✅ Rejection log exists in approval_logs table (same database)
 - ✅ action is "rejected"
 - ✅ rejection_reason matches request body
 
 ### **Test 13: Get Approval History**
 
-**Postman Request**: `GET /api/v1/approvals/menus/{menu_id}/history`
+**Postman Request**: `GET /api/v1/menus/{menu_id}/history`
 
 **Validation Query**:
 ```sql
-\c deliveryx_approval
+\c deliveryx_menu
 
 -- View all approval actions for this menu (chronological order)
 SELECT
@@ -941,9 +935,7 @@ JOIN products p ON mp.product_id = p.product_id
 WHERE m.menu_id = 'YOUR_MENU_ID_HERE'
 ORDER BY c.position, mp.position;
 
--- STEP 4: Verify Approval History exists (Approval Service)
-\c deliveryx_approval
-
+-- STEP 4: Verify Approval History exists (same database as menus)
 SELECT
     menu_id,
     action,
@@ -965,8 +957,7 @@ SELECT location_id, city FROM locations WHERE location_id = 'YOUR_LOCATION_ID_HE
 \c deliveryx_menu
 SELECT menu_id, status, submitted_at FROM menus WHERE location_id = 'YOUR_LOCATION_ID_HERE';
 
--- Approval DB: Get approval history for this menu
-\c deliveryx_approval
+-- Approval history for this menu (same database)
 SELECT action, admin_email, created_at FROM approval_logs WHERE menu_id = 'YOUR_MENU_ID_HERE';
 ```
 
@@ -1018,7 +1009,6 @@ SELECT menu_id, status, reviewed_at FROM menus WHERE status = 'approved' AND rev
 SELECT menu_id, status, submitted_at FROM menus WHERE status = 'draft' AND submitted_at IS NOT NULL;
 
 -- Check for approval logs without corresponding admin_email
-\c deliveryx_approval
 SELECT id, menu_id, action, admin_email
 FROM approval_logs
 WHERE action IN ('approved', 'rejected') AND admin_email IS NULL;
@@ -1064,9 +1054,7 @@ FROM menus
 GROUP BY status
 ORDER BY count DESC;
 
--- Approval Service Statistics
-\c deliveryx_approval
-
+-- Menu Approval Statistics (same database as menus)
 SELECT
     action,
     COUNT(*) AS count,
@@ -1102,12 +1090,13 @@ WHERE submitted_at IS NOT NULL AND reviewed_at IS NULL AND status = 'pending_rev
 
 -- Find menus that were reviewed but have no approval logs
 \c deliveryx_menu
-SELECT menu_id, status, reviewed_at FROM menus WHERE reviewed_at IS NOT NULL;
--- Copy menu_id values
-
-\c deliveryx_approval
-SELECT menu_id FROM approval_logs WHERE menu_id IN ('menu_id1', 'menu_id2', ...);
--- Compare: menus with reviewed_at should have approval logs
+SELECT m.menu_id, m.status, m.reviewed_at
+FROM menus m
+WHERE m.reviewed_at IS NOT NULL
+AND NOT EXISTS (
+    SELECT 1 FROM approval_logs al WHERE al.menu_id = m.menu_id
+);
+-- These menus have been reviewed but lack audit trail
 
 -- Find products that aren't in any menu
 \c deliveryx_menu
@@ -1147,15 +1136,16 @@ After running the complete Postman collection, verify:
 - ✅ Menu status changed from "draft" → "pending_review" after submission
 - ✅ Menu status changed to "approved" or "rejected" after approval/rejection
 
-### **Approval Service**:
-- ✅ Approval log exists for approve or reject action
+### **Menu Approval**:
+- ✅ Approval log exists in approval_logs table for approve or reject action
 - ✅ admin_email is populated in approval logs
 - ✅ rejection_reason is populated for rejected menus
 - ✅ Timestamps are in chronological order
+- ✅ approval_logs table exists in deliveryx_menu database (consolidated with menus)
 
 ### **Cross-Database**:
 - ✅ Menu.location_id matches a valid location in Restaurant Service
-- ✅ Approval logs reference valid menu_id from Menu Service
+- ✅ Approval logs are in same database as menus (deliveryx_menu)
 - ✅ No orphaned records
 - ✅ No data inconsistencies (e.g., approved menus without reviewed_at)
 

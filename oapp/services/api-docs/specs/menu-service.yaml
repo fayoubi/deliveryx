@@ -24,6 +24,8 @@ tags:
     description: Adding products to menus
   - name: Attribute Groups
     description: Product attribute groups and options
+  - name: Menu Approval
+    description: Menu approval and rejection operations
 
 paths:
   # Menu Endpoints
@@ -132,6 +134,125 @@ paths:
                 $ref: '#/components/schemas/Menu'
         '400':
           description: Menu validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # Menu Approval Endpoints
+  /menus/{menu_id}/approve:
+    post:
+      tags:
+        - Menu Approval
+      summary: Approve a submitted menu
+      description: Changes menu status to approved and logs the approval action
+      operationId: approveMenu
+      parameters:
+        - name: menu_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: X-Admin-Email
+          in: header
+          required: false
+          schema:
+            type: string
+            format: email
+          description: Admin email for audit trail
+      responses:
+        '200':
+          description: Menu approved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApprovalResponse'
+        '400':
+          description: Menu not in pending_review status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Failed to update menu status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /menus/{menu_id}/reject:
+    post:
+      tags:
+        - Menu Approval
+      summary: Reject a submitted menu
+      description: Changes menu status to rejected with a reason and logs the rejection action
+      operationId: rejectMenu
+      parameters:
+        - name: menu_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: X-Admin-Email
+          in: header
+          required: false
+          schema:
+            type: string
+            format: email
+          description: Admin email for audit trail
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RejectMenuRequest'
+      responses:
+        '200':
+          description: Menu rejected successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RejectionResponse'
+        '400':
+          description: Invalid request or menu not in pending_review status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Failed to update menu status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /menus/{menu_id}/history:
+    get:
+      tags:
+        - Menu Approval
+      summary: Get approval history for a menu
+      description: Returns all approval/rejection actions for audit purposes
+      operationId: getApprovalHistory
+      parameters:
+        - name: menu_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Approval history
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApprovalLog'
+        '500':
+          description: Failed to retrieve history
           content:
             application/json:
               schema:
@@ -842,3 +963,72 @@ components:
       properties:
         error:
           type: string
+
+    ApprovalResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Menu approved successfully"
+        menu_id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          example: "approved"
+
+    RejectionResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Menu rejected successfully"
+        menu_id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          example: "rejected"
+        rejection_reason:
+          type: string
+
+    RejectMenuRequest:
+      type: object
+      required:
+        - rejection_reason
+      properties:
+        rejection_reason:
+          type: string
+          minLength: 1
+          maxLength: 1000
+          example: "Menu items missing descriptions"
+        notes:
+          type: string
+          example: "Please provide more detailed descriptions for all products"
+
+    ApprovalLog:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        menu_id:
+          type: string
+          format: uuid
+        action:
+          type: string
+          enum: [approved, rejected]
+        admin_id:
+          type: string
+          format: uuid
+          nullable: true
+        admin_email:
+          type: string
+          format: email
+          nullable: true
+        rejection_reason:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time

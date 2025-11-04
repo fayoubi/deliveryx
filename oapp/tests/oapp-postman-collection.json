@@ -823,7 +823,7 @@
 			]
 		},
 		{
-			"name": "Approval Service",
+			"name": "Menu Approval",
 			"item": [
 				{
 					"name": "Approve Menu",
@@ -862,12 +862,11 @@
 							"raw": "{\n  \"notes\": \"Menu approved - looks good\"\n}"
 						},
 						"url": {
-							"raw": "{{base_url}}/approvals/menus/{{menu_id}}/approve",
+							"raw": "{{base_url}}/menus/{{menu_id}}/approve",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"approvals",
 								"menus",
 								"{{menu_id}}",
 								"approve"
@@ -901,12 +900,11 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{base_url}}/approvals/menus/{{menu_id}}/history",
+							"raw": "{{base_url}}/menus/{{menu_id}}/history",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"approvals",
 								"menus",
 								"{{menu_id}}",
 								"history"
@@ -996,12 +994,11 @@
 							"raw": "{\n  \"rejection_reason\": \"Menu items need better descriptions\",\n  \"notes\": \"Please provide more detailed descriptions for all products\"\n}"
 						},
 						"url": {
-							"raw": "{{base_url}}/approvals/menus/{{menu_id}}/reject",
+							"raw": "{{base_url}}/menus/{{menu_id}}/reject",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"approvals",
 								"menus",
 								"{{menu_id}}",
 								"reject"
