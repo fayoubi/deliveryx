@@ -19,6 +19,14 @@ type LocationMenuCheck struct {
 	MenusCount int  `json:"menus_count"`
 }
 
+// MenuSummary represents menu summary information
+type MenuSummary struct {
+	MenuID           string `json:"menu_id"`
+	Status           string `json:"status"`
+	CollectionsCount int    `json:"collections_count"`
+	ProductsCount    int    `json:"products_count"`
+}
+
 // NewMenuServiceClient creates a new Menu Service client
 func NewMenuServiceClient(baseURL string) *MenuServiceClient {
 	return &MenuServiceClient{
@@ -44,6 +52,28 @@ func (c *MenuServiceClient) CheckLocationHasMenus(locationID string) (*LocationM
 	}
 
 	var result LocationMenuCheck
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		return nil, fmt.Errorf("failed to decode response: %w", err)
+	}
+
+	return &result, nil
+}
+
+// GetMenuSummary gets menu summary information for a location
+func (c *MenuServiceClient) GetMenuSummary(locationID string) (*MenuSummary, error) {
+	url := fmt.Sprintf("%s/internal/locations/%s/menu-summary", c.baseURL, locationID)
+
+	resp, err := c.httpClient.Get(url)
+	if err != nil {
+		return nil, fmt.Errorf("failed to call menu service: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("menu service returned status %d", resp.StatusCode)
+	}
+
+	var result MenuSummary
 	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
 		return nil, fmt.Errorf("failed to decode response: %w", err)
 	}

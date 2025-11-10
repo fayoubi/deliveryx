@@ -160,3 +160,39 @@ func (r *MenuRepository) CountByLocation(locationID string) (int, error) {
 	}
 	return count, nil
 }
+
+// GetSummaryByLocation gets menu summary information for a location
+func (r *MenuRepository) GetSummaryByLocation(locationID string) (*models.MenuSummary, error) {
+	var summary models.MenuSummary
+
+	// Get menu basic info
+	query := `SELECT menu_id, status FROM menus WHERE location_id = $1`
+	err := r.db.QueryRow(query, locationID).Scan(&summary.MenuID, &summary.Status)
+	if err == sql.ErrNoRows {
+		return nil, nil // No menu for this location
+	}
+	if err != nil {
+		return nil, fmt.Errorf("failed to get menu: %w", err)
+	}
+
+	// Count collections
+	collectionsQuery := `SELECT COUNT(*) FROM collections WHERE menu_id = $1`
+	err = r.db.QueryRow(collectionsQuery, summary.MenuID).Scan(&summary.CollectionsCount)
+	if err != nil {
+		return nil, fmt.Errorf("failed to count collections: %w", err)
+	}
+
+	// Count products (across all collections in this menu)
+	productsQuery := `
+		SELECT COUNT(DISTINCT mp.product_id)
+		FROM menu_products mp
+		JOIN collections c ON mp.collection_id = c.collection_id
+		WHERE c.menu_id = $1
+	`
+	err = r.db.QueryRow(productsQuery, summary.MenuID).Scan(&summary.ProductsCount)
+	if err != nil {
+		return nil, fmt.Errorf("failed to count products: %w", err)
+	}
+
+	return &summary, nil
+}

@@ -23,6 +23,20 @@ type LocationWithHours struct {
 	OperatingHours []OperatingHour `json:"operating_hours"`
 }
 
+// MenuSummary represents menu summary information for a location
+type MenuSummary struct {
+	MenuID           string `json:"menu_id"`
+	Status           string `json:"status"`
+	CollectionsCount int    `json:"collections_count"`
+	ProductsCount    int    `json:"products_count"`
+}
+
+// LocationWithMenu represents a location with its menu summary
+type LocationWithMenu struct {
+	Location
+	Menu *MenuSummary `json:"menu"`
+}
+
 // CreateLocationRequest represents the request body for creating a location
 type CreateLocationRequest struct {
 	Address         string   `json:"address" validate:"required"`

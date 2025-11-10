@@ -32,3 +32,11 @@ type UpdateStatusRequest struct {
 	Status          string  `json:"status" validate:"required"`
 	RejectionReason *string `json:"rejection_reason,omitempty"`
 }
+
+// MenuSummary represents a summary of menu information for a location
+type MenuSummary struct {
+	MenuID           string `json:"menu_id"`
+	Status           string `json:"status"`
+	CollectionsCount int    `json:"collections_count"`
+	ProductsCount    int    `json:"products_count"`
+}

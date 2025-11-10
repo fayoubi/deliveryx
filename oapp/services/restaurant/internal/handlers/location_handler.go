@@ -271,8 +271,35 @@ func (h *LocationHandler) ListLocations(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
+	// Enrich locations with menu summary information
+	locationsWithMenu := make([]models.LocationWithMenu, len(locations))
+	for i, loc := range locations {
+		locationsWithMenu[i] = models.LocationWithMenu{
+			Location: loc,
+			Menu:     nil, // Default to no menu
+		}
+
+		// Try to get menu summary from Menu Service
+		menuSummary, err := h.menuClient.GetMenuSummary(loc.LocationID)
+		if err != nil {
+			// Log error but don't fail the request
+			// Menu service might be unavailable or location might not have a menu
+			continue
+		}
+
+		// Convert client.MenuSummary to models.MenuSummary
+		if menuSummary != nil && menuSummary.MenuID != "" {
+			locationsWithMenu[i].Menu = &models.MenuSummary{
+				MenuID:           menuSummary.MenuID,
+				Status:           menuSummary.Status,
+				CollectionsCount: menuSummary.CollectionsCount,
+				ProductsCount:    menuSummary.ProductsCount,
+			}
+		}
+	}
+
 	// Build paginated response
-	response := models.NewPaginatedResponse(locations, pagination.Page, pagination.PageSize, total)
+	response := models.NewPaginatedResponse(locationsWithMenu, pagination.Page, pagination.PageSize, total)
 	respondWithJSON(w, http.StatusOK, response)
 }
 
