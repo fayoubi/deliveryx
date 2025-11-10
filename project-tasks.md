@@ -5,13 +5,13 @@ todo:
   - Document basic usage (security context, endpoints if any, shutdown command).
   - (If needed, add a README section describing how team members can use this integration.)
 
-- Use the alias = 
+- Use the alias = testing-debt-admin-portal.md
 - docker-compose: remove version: '3.8' - WARN[0000] /Users/fahdayoubi/dev/deliveryx/oapp/docker-compose.yml: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion 
 - 
 
 Admin-portal:
-Groom 
-Story: oapp/stories/todo/store-epics/api-endpoints1.md
+- complete testing-debt-admin-portal.md 
+
 
 Tech-debt:
 - Story: Remove the need for the approval database (now in the Menu Service)

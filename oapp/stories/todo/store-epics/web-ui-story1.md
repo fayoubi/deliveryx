@@ -166,17 +166,17 @@ The Restaurant Service API is fully functional and tested. We need a simple, use
 
 - ✅ Modal overlay with form containing fields:
   - **Address** (required, text input)
-  - **City** (required, text input)
-  - **Postal Code** (required, text input)
+  - **City** (required, text input, max 100 chars)
+  - **Postal Code** (optional, text input, max 20 chars)
   - **Phone** (required, text input with phone format validation)
-  - **Location Manager** (required, text input)
-  - **Latitude** (required, number input, -90 to 90)
-  - **Longitude** (required, number input, -180 to 180)
+  - **Location Manager** (optional, text input, max 255 chars)
+  - **Latitude** (optional, number input, range -90 to 90)
+  - **Longitude** (optional, number input, range -180 to 180)
 - ✅ Store ID is automatically included from current context (not shown in form)
 - ✅ Client-side validation using `react-hook-form`:
   - Required fields show error message if empty
-  - Latitude/Longitude validated for proper ranges
-  - Phone validated for basic pattern
+  - Latitude/Longitude validated for proper ranges if provided
+  - Phone validated for basic pattern (see AC16)
 - ✅ "Cancel" button closes modal
 - ✅ "Create Location" button:
   - Submits form via `POST /api/v1/stores/{store_id}/locations`
@@ -189,7 +189,14 @@ The Restaurant Service API is fully functional and tested. We need a simple, use
 ### AC9: Edit Location Modal
 
 - ✅ Modal pre-populated with existing location data
-- ✅ Same form fields and validation as Create Location
+- ✅ Same form fields and validation as Create Location:
+  - **Address** (required, text input)
+  - **City** (required, text input, max 100 chars)
+  - **Postal Code** (optional, text input, max 20 chars)
+  - **Phone** (required, text input with phone format validation)
+  - **Location Manager** (optional, text input, max 255 chars)
+  - **Latitude** (optional, number input, range -90 to 90)
+  - **Longitude** (optional, number input, range -180 to 180)
 - ✅ "Cancel" button closes modal
 - ✅ "Update Location" button:
   - Submits form via `PUT /api/v1/locations/{location_id}`
@@ -235,6 +242,94 @@ The Restaurant Service API is fully functional and tested. We need a simple, use
 - ✅ Network errors handled gracefully, e.g.:
 
   > "Unable to connect to server. Please check your connection and try again."
+
+### AC13: Pagination, Sorting, and Filtering (Deferred)
+
+- ✅ The initial MVP will skip these features and just show all results.
+  While the API supports:
+  - Pagination: page, page_size params
+  - Sorting: sort param (e.g., name, -created_at)
+  - Filtering: q (search), phone (stores), city (locations)
+
+  The frontend will skip these features for now
+
+---
+
+### AC14: Delete Conflict Handling
+
+- ✅ When attempting to delete a store or location that has dependencies:
+  - Let the DELETE request execute normally
+  - API will return 409 Conflict status with error details
+  - Display user-friendly error message from API response:
+    - For stores: `"Cannot delete store while it has locations. Please remove all locations first."`
+    - For locations: `"Cannot delete location while it has menus. Please remove all menus first."`
+  - Error details may include counts (e.g., `locations_count: 3` or `menus_count: 2`)
+  - Show red toast notification with the error message
+  - Keep the item visible in the list (no optimistic removal on conflict)
+
+**Rationale**: Let the backend enforce business rules to avoid race conditions. Handle conflicts gracefully when they occur.
+
+---
+
+### AC15: Logo URL Handling
+
+- ✅ Logo URL field validation:
+  - Validate URL format using basic pattern: starts with `http://` or `https://`
+  - Do NOT pre-load or verify the image before form submission
+  - Accept any valid URL format
+- ✅ Logo display in Store Details view:
+  - If `logo_url` is present, display `<img src={logo_url} />` with appropriate styling
+  - If image fails to load (404, network error, CORS), show fallback:
+    - Placeholder icon or text (e.g., store initials in a circle)
+  - No toast notification needed for image load failures
+- ✅ Image styling:
+  - Max width: 100px, max height: 100px
+  - Object-fit: cover
+  - Rounded corners or circular
+
+**Rationale**: Format validation only. Avoid pre-loading due to CORS, auth, and latency issues.
+
+---
+
+### AC16: Phone Number Validation
+
+- ✅ Phone number format requirements:
+  - Allow digits, spaces, dashes, plus signs, and parentheses: `[0-9\s\-\+\(\)]+`
+  - Must contain at least one digit
+  - Client-side validation shows inline error: `"Phone number contains invalid characters"`
+- ✅ Examples of valid formats:
+  - `+1-555-123-4567`
+  - `(555) 123-4567`
+  - `+212 6 12 34 56 78`
+  - `0612345678`
+- ✅ Backend validation matches frontend pattern (already implemented in `services/restaurant/internal/utils/validation.go:13`)
+
+---
+
+### AC17: Environment Configuration
+
+- ✅ API base URL configurable via environment variable:
+  - Development: `http://localhost/api/v1` (via Traefik)
+  - Use Vite environment variables: `VITE_API_BASE_URL`
+- ✅ Create `.env.development` file:
+  ```
+  VITE_API_BASE_URL=http://localhost/api/v1
+  ```
+- ✅ Configure axios instance to use `import.meta.env.VITE_API_BASE_URL`
+- ✅ Add `.env.example` file to repository with template
+
+---
+
+### AC18: Browser Support
+
+- ✅ Supported browsers:
+  - Chrome/Edge: Last 2 versions
+  - Firefox: Last 2 versions
+  - Safari: Last 2 versions
+  - Mobile Safari (iOS): Last 2 versions
+  - Chrome for Android: Last 2 versions
+- ✅ No IE11 support required
+- ✅ Vite default targets are sufficient (ESNext)
 
 ---
 
@@ -293,7 +388,7 @@ admin-portal/
 └── README.md
 
 
-Definition of Done
+## Definition of Done
 
 ✅ Code merged to main branch
 
@@ -314,3 +409,26 @@ Definition of Done
 ✅ Manual testing completed (smoke test all CRUD operations)
 
 ✅ README.md updated with admin portal setup instructions
+
+---
+
+### Testing Debt
+
+⚠️ **Known Testing Gaps** (to be addressed in future story):
+
+This MVP proceeds without automated frontend tests due to time constraints. The following testing debt is acknowledged:
+
+- **Unit Tests**: No unit tests for components, utilities, or API service layer
+- **Integration Tests**: No integration tests for form submission and API interactions
+- **E2E Tests**: No end-to-end tests for user workflows
+- **Visual Regression Tests**: No screenshot comparison tests for responsive layouts
+
+**Mitigation**:
+- Manual testing checklist completed before merge
+- Backend API already has comprehensive test coverage
+- Testing story created to address this debt (see `testing-debt-admin-portal.md`)
+
+**Risk Assessment**: Medium
+- Backend validation provides safety net for business logic
+- Manual testing catches critical UI bugs
+- Refactoring and future changes will be riskier without test coverage

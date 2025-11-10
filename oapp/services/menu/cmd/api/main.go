@@ -114,6 +114,7 @@ func main() {
 	internal := router.PathPrefix("/internal").Subrouter()
 	internal.HandleFunc("/menus/{menu_id}/status", menuHandler.UpdateMenuStatus).Methods("PUT")
 	internal.HandleFunc("/locations/{location_id}/has-menus", internalHandler.CheckLocationHasMenus).Methods("GET")
+	internal.HandleFunc("/locations/{location_id}/menu-summary", internalHandler.GetMenuSummary).Methods("GET")
 
 	// Health check
 	router.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
