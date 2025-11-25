@@ -1,4 +1,4 @@
-.PHONY: help infra-up infra-down infra-restart infra-logs db-migrate-up db-migrate-down db-reset db-status
+.PHONY: help infra-up infra-down infra-restart infra-logs db-migrate-up db-migrate-down db-reset db-status test test-menu test-restaurant test-coverage test-coverage-html
 
 help: ## Show this help message
 	@echo 'Usage: make [target]'
@@ -71,3 +71,37 @@ db-status: ## Check migration status for all databases
 	@echo ""
 	@echo "📊 Approval Service migration status:"
 	migrate -path ./services/approval/migrations -database "postgresql://deliveryx:deliveryx_dev_pass@localhost:5432/deliveryx_approval?sslmode=disable" version
+
+# Testing targets
+test: ## Run all tests
+	@echo "🧪 Running all tests..."
+	@cd services/menu && go test ./... -v
+	@cd services/restaurant && go test ./... -v
+	@echo "✅ All tests passed!"
+
+test-menu: ## Run menu service tests
+	@echo "🧪 Running menu service tests..."
+	@cd services/menu && go test ./... -v
+
+test-restaurant: ## Run restaurant service tests
+	@echo "🧪 Running restaurant service tests..."
+	@cd services/restaurant && go test ./... -v
+
+test-coverage: ## Run tests with coverage report
+	@echo "🧪 Running tests with coverage..."
+	@cd services/menu && go test ./... -coverprofile=coverage.out -covermode=atomic
+	@cd services/menu && go tool cover -func=coverage.out | tail -1
+	@echo ""
+	@cd services/restaurant && go test ./... -coverprofile=coverage.out -covermode=atomic
+	@cd services/restaurant && go tool cover -func=coverage.out | tail -1
+	@echo "✅ Coverage report generated!"
+
+test-coverage-html: ## Generate HTML coverage report
+	@echo "🧪 Generating HTML coverage report..."
+	@cd services/menu && go test ./... -coverprofile=coverage.out -covermode=atomic
+	@cd services/menu && go tool cover -html=coverage.out -o coverage.html
+	@echo "✅ Menu service coverage report: services/menu/coverage.html"
+	@cd services/restaurant && go test ./... -coverprofile=coverage.out -covermode=atomic
+	@cd services/restaurant && go tool cover -html=coverage.out -o coverage.html
+	@echo "✅ Restaurant service coverage report: services/restaurant/coverage.html"
+	@echo "📊 Open coverage.html files in your browser to view detailed coverage"

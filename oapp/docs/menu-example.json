@@ -1,0 +1,909 @@
+{
+    "attributes": [
+        {
+            "id": "e0326dbd-ee3d-4415-8105-effbf5fa06ea",
+            "name": "L",
+            "selected_by_default": false,
+            "price_impact": 40,
+            "available": true
+        },
+        {
+            "id": "8217123e-019c-4678-9890-1ed9b55d1dd2",
+            "name": "M",
+            "selected_by_default": true,
+            "price_impact": 20,
+            "available": true
+        },
+        {
+            "id": "32aef6f2-7cb4-4534-b21d-4a235f18cefc",
+            "name": "S",
+            "selected_by_default": false,
+            "price_impact": 0,
+            "available": true
+        },
+        {
+            "id": "1eb240c9-bb5e-4b22-884f-288b9273a981",
+            "name": "XL",
+            "selected_by_default": false,
+            "price_impact": 60,
+            "available": true
+        },
+        {
+            "id": "62a83dc3-439c-419c-9675-bae2b77a3a6c",
+            "name": "Extra Hot",
+            "selected_by_default": false,
+            "price_impact": 0,
+            "available": true
+        },
+        {
+            "id": "31442e0d-8379-44c7-8c2f-d25d270665f3",
+            "name": "Hot",
+            "selected_by_default": false,
+            "price_impact": 0,
+            "available": true
+        },
+        {
+            "id": "ce0fc901-83eb-4725-ba66-4821d68e6de2",
+            "name": "Medium",
+            "selected_by_default": false,
+            "price_impact": 0,
+            "available": true
+        },
+        {
+            "id": "9f7cec1a-eed6-4ad4-93b3-fef8239a2561",
+            "name": "Mild",
+            "selected_by_default": false,
+            "price_impact": 0,
+            "available": true
+        },
+        {
+            "id": "24bd20b6-f7b0-4a82-bfb4-65c150233a36",
+            "name": "No Spice",
+            "selected_by_default": true,
+            "price_impact": 0,
+            "available": true
+        },
+        {
+            "id": "23b8441f-4e37-4f7b-bf81-d1930e3347e2",
+            "name": "Thai Hot",
+            "selected_by_default": false,
+            "price_impact": 0,
+            "available": true
+        },
+        {
+            "id": "2e17c248-ac66-4634-a07e-4439fafdef42",
+            "name": "Egg Noodles",
+            "selected_by_default": false,
+            "price_impact": 0,
+            "available": true
+        },
+        {
+            "id": "00be0cf2-305c-4e58-a19d-62ac8e4836a4",
+            "name": "Fried Rice",
+            "selected_by_default": false,
+            "price_impact": 2,
+            "available": true
+        },
+        {
+            "id": "6cb0f49f-f6c9-4267-8de5-170f2992bf7b",
+            "name": "Rice Noodles",
+            "selected_by_default": false,
+            "price_impact": 0,
+            "available": true
+        },
+        {
+            "id": "de1ed71a-ea28-43ea-9780-3141f6800d30",
+            "name": "Soba",
+            "selected_by_default": false,
+            "price_impact": 1,
+            "available": true
+        },
+        {
+            "id": "ea965d50-3494-43ba-a83c-1df4663235ce",
+            "name": "Steamed Brown Rice",
+            "selected_by_default": false,
+            "price_impact": 0.5,
+            "available": true
+        },
+        {
+            "id": "f2e1fbfb-cb5b-4aa9-9195-cd9eed8700c0",
+            "name": "Steamed White Rice",
+            "selected_by_default": true,
+            "price_impact": 0,
+            "available": true
+        },
+        {
+            "id": "8e4e1298-1984-4d08-b350-50b45d9786f7",
+            "name": "Sticky Rice",
+            "selected_by_default": false,
+            "price_impact": 1,
+            "available": true
+        },
+        {
+            "id": "29ec63e5-f45c-4889-b0f2-a52b628a14a4",
+            "name": "Udon",
+            "selected_by_default": false,
+            "price_impact": 1,
+            "available": true
+        },
+        {
+            "id": "f42eeee9-04ce-4348-b55c-afc5651cdee8",
+            "name": "Cut in Half",
+            "selected_by_default": false,
+            "price_impact": 0,
+            "available": true
+        },
+        {
+            "id": "d10f17fc-4dcd-4009-b383-0c7a1393130b",
+            "name": "Extra Sauce",
+            "selected_by_default": false,
+            "price_impact": 0.5,
+            "available": true
+        },
+        {
+            "id": "74dc5e7b-8508-49b6-866c-1ae05c498978",
+            "name": "Less Oil",
+            "selected_by_default": false,
+            "price_impact": 0,
+            "available": true
+        },
+        {
+            "id": "afade5b4-6b2c-45f6-b7bf-f0bc804539ba",
+            "name": "Light Salt",
+            "selected_by_default": false,
+            "price_impact": 0,
+            "available": true
+        },
+        {
+            "id": "50e760f4-b424-4687-aff6-34d368129094",
+            "name": "No Cilantro",
+            "selected_by_default": false,
+            "price_impact": 0,
+            "available": true
+        },
+        {
+            "id": "1f3d2f71-cbfd-4c0b-8494-67da6cfa654c",
+            "name": "No Onions",
+            "selected_by_default": false,
+            "price_impact": 0,
+            "available": true
+        },
+        {
+            "id": "1c2cba6b-ddb7-47cb-9cbd-dbfef9f5e7a9",
+            "name": "Well Done",
+            "selected_by_default": false,
+            "price_impact": 0,
+            "available": true
+        },
+        {
+            "id": "ee33523a-42f6-48ac-9aeb-733614c84a76",
+            "name": "Bien cuit",
+            "selected_by_default": true,
+            "price_impact": 0,
+            "available": true
+        },
+        {
+            "id": "cb779343-3527-409d-804b-40cff578e721",
+            "name": "Brûlé",
+            "selected_by_default": false,
+            "price_impact": 0,
+            "available": true
+        },
+        {
+            "id": "266647fc-678c-4e9f-9955-691125cdc4f3",
+            "name": "Cru",
+            "selected_by_default": false,
+            "price_impact": 0,
+            "available": true
+        },
+        {
+            "id": "c4358b2d-fada-4922-8b92-36409ebd7345",
+            "name": "Gluten-Free",
+            "selected_by_default": false,
+            "price_impact": 3,
+            "available": true
+        },
+        {
+            "id": "38638625-dd54-4162-bbdf-b31a63ff71e1",
+            "name": "Regular",
+            "selected_by_default": true,
+            "price_impact": 0,
+            "available": true
+        },
+        {
+            "id": "cdbd87dd-ee93-4df5-b8e5-0562de6301f0",
+            "name": "Stuffed Crust",
+            "selected_by_default": false,
+            "price_impact": 3,
+            "available": true
+        },
+        {
+            "id": "64ac4f5e-348a-47e9-a0b2-79716e4c967b",
+            "name": "Thick Crust",
+            "selected_by_default": false,
+            "price_impact": 1,
+            "available": true
+        },
+        {
+            "id": "1bfeb324-f357-47a5-b384-18ba335b2bd4",
+            "name": "Thin Crust",
+            "selected_by_default": false,
+            "price_impact": 0,
+            "available": true
+        },
+        {
+            "id": "e7b588fa-36bb-4761-9031-87f1231489c6",
+            "name": "Black",
+            "selected_by_default": false,
+            "price_impact": 0,
+            "available": true
+        },
+        {
+            "id": "f24c994b-27d1-4ade-b2c4-1875840b2e4e",
+            "name": "Blue",
+            "selected_by_default": false,
+            "price_impact": 0,
+            "available": true
+        },
+        {
+            "id": "a9590b19-c632-4338-83c0-226a2e7702cf",
+            "name": "Green",
+            "selected_by_default": false,
+            "price_impact": 0,
+            "available": true
+        },
+        {
+            "id": "7b17ad10-a9b7-424e-a75c-f216c7836e36",
+            "name": "Red",
+            "selected_by_default": false,
+            "price_impact": 0,
+            "available": true
+        },
+        {
+            "id": "0c9f7f06-a8ea-41c9-bff7-1effd1f205a0",
+            "name": "White",
+            "selected_by_default": false,
+            "price_impact": 0,
+            "available": true
+        },
+        {
+            "id": "9aa3d6bc-1bf7-4081-a53c-5f78d1fe5843",
+            "name": "Brown Rice",
+            "selected_by_default": false,
+            "price_impact": 0.5,
+            "available": true
+        },
+        {
+            "id": "2a641128-255b-46e1-afd4-ea60cd50ca4c",
+            "name": "French Fries",
+            "selected_by_default": false,
+            "price_impact": 1.5,
+            "available": true
+        },
+        {
+            "id": "88d9eafc-eeae-4695-a235-9ebb0147dd2f",
+            "name": "Fried Rice",
+            "selected_by_default": false,
+            "price_impact": 2,
+            "available": true
+        },
+        {
+            "id": "4acd3db2-c4b7-435b-a919-7a64c8b28334",
+            "name": "No Side",
+            "selected_by_default": false,
+            "price_impact": -1,
+            "available": true
+        },
+        {
+            "id": "fd37983b-0116-41c8-aad3-ccff9255139a",
+            "name": "Salad",
+            "selected_by_default": false,
+            "price_impact": 1,
+            "available": true
+        },
+        {
+            "id": "c1a44770-e154-4600-a6fc-2cd3e8db2efd",
+            "name": "Steamed Vegetables",
+            "selected_by_default": false,
+            "price_impact": 1.5,
+            "available": true
+        },
+        {
+            "id": "03c81a4d-66a1-4569-adbe-ce630a6ffb08",
+            "name": "White Rice",
+            "selected_by_default": true,
+            "price_impact": 0,
+            "available": true
+        },
+        {
+            "id": "08fa15c8-5f46-43c4-a297-63b371a7ec70",
+            "name": "Beef",
+            "selected_by_default": false,
+            "price_impact": 2,
+            "available": true
+        },
+        {
+            "id": "b2287a94-d1f4-4a4f-bad7-1c8a867a8846",
+            "name": "Chicken",
+            "selected_by_default": true,
+            "price_impact": 0,
+            "available": true
+        },
+        {
+            "id": "843cf4c6-c495-4173-9630-5c9380ebb566",
+            "name": "Mixed Seafood",
+            "selected_by_default": false,
+            "price_impact": 4,
+            "available": true
+        },
+        {
+            "id": "5360f15f-5561-4b56-a34c-e33c46cb136b",
+            "name": "No Protein",
+            "selected_by_default": false,
+            "price_impact": -3,
+            "available": true
+        },
+        {
+            "id": "a2921c3d-b851-4ce9-96ad-8a6298bd3165",
+            "name": "Pork",
+            "selected_by_default": false,
+            "price_impact": 1.5,
+            "available": true
+        },
+        {
+            "id": "37dd8d86-28e5-40ba-82de-0392a0716110",
+            "name": "Shrimp",
+            "selected_by_default": false,
+            "price_impact": 3,
+            "available": true
+        },
+        {
+            "id": "84829b6f-e867-4435-9e13-3bdd74b3c8fa",
+            "name": "Tofu",
+            "selected_by_default": false,
+            "price_impact": 0,
+            "available": true
+        },
+        {
+            "id": "510e85af-0e49-4927-88f7-76474def3325",
+            "name": "Bowl (No Tortilla)",
+            "selected_by_default": false,
+            "price_impact": 0,
+            "available": true
+        },
+        {
+            "id": "9081da17-415e-4e0c-a448-7969d2accc79",
+            "name": "Corn Tortilla",
+            "selected_by_default": false,
+            "price_impact": 0,
+            "available": true
+        },
+        {
+            "id": "92ccedd0-328c-4bb4-af8c-3caabee592cb",
+            "name": "Flour Tortilla",
+            "selected_by_default": true,
+            "price_impact": 0,
+            "available": true
+        },
+        {
+            "id": "0ea0e78e-cf41-4e9f-8979-e3215a040ba7",
+            "name": "Hard Shell",
+            "selected_by_default": false,
+            "price_impact": 0.5,
+            "available": true
+        },
+        {
+            "id": "5183fc86-57b5-4b62-bb36-d1348e77a29c",
+            "name": "Whole Wheat",
+            "selected_by_default": false,
+            "price_impact": 0.5,
+            "available": true
+        },
+        {
+            "id": "6d61a294-e99d-49ac-9059-af97557d3b82",
+            "name": "Medium",
+            "selected_by_default": false,
+            "price_impact": 0,
+            "available": true
+        },
+        {
+            "id": "5e49666b-fa1f-47ac-98b0-81990be6045e",
+            "name": "Medium Rare",
+            "selected_by_default": true,
+            "price_impact": 0,
+            "available": true
+        },
+        {
+            "id": "ec61f6a3-aa7f-40b1-9ec1-d0dc52b39a77",
+            "name": "Medium Well",
+            "selected_by_default": false,
+            "price_impact": 0,
+            "available": true
+        },
+        {
+            "id": "c67c728f-c0f9-47cb-a9c3-35b6b3bba8c1",
+            "name": "Rare",
+            "selected_by_default": false,
+            "price_impact": 0,
+            "available": true
+        },
+        {
+            "id": "a81f13ee-a37d-4fd5-9a49-f337d424e982",
+            "name": "Well Done",
+            "selected_by_default": false,
+            "price_impact": 0,
+            "available": true
+        },
+        {
+            "id": "41aaca4f-9c11-48ae-9300-1027ad0ff4aa",
+            "name": "Extra Sauce",
+            "selected_by_default": false,
+            "price_impact": 0.5,
+            "available": true
+        },
+        {
+            "id": "a8821371-8f6c-4cf0-9af0-6fdcf03727d1",
+            "name": "Light Sauce",
+            "selected_by_default": false,
+            "price_impact": 0,
+            "available": true
+        },
+        {
+            "id": "19703262-11f4-406d-8869-0291501816fd",
+            "name": "No Sauce",
+            "selected_by_default": false,
+            "price_impact": 0,
+            "available": true
+        },
+        {
+            "id": "092c0119-d12f-4be7-9835-fa9b38539424",
+            "name": "On the Side",
+            "selected_by_default": true,
+            "price_impact": 0,
+            "available": true
+        },
+        {
+            "id": "c2622b1a-1089-46bc-bfd1-c42a67bfbe46",
+            "name": "Regular Sauce",
+            "selected_by_default": false,
+            "price_impact": 0,
+            "available": true
+        }
+    ],
+    "attribute_groups": [
+        {
+            "id": "33333333-3333-3333-3333-333333333333",
+            "name": "Color",
+            "min": 0,
+            "max": 5,
+            "collapse": false,
+            "multiple_selection": true,
+            "attributes": [
+                "e7b588fa-36bb-4761-9031-87f1231489c6",
+                "f24c994b-27d1-4ade-b2c4-1875840b2e4e",
+                "a9590b19-c632-4338-83c0-226a2e7702cf",
+                "7b17ad10-a9b7-424e-a75c-f216c7836e36",
+                "0c9f7f06-a8ea-41c9-bff7-1effd1f205a0"
+            ]
+        },
+        {
+            "id": "94630205-85c5-494b-ac23-c460bbf9c175",
+            "name": "Cooking Temperature",
+            "min": 1,
+            "max": 1,
+            "collapse": false,
+            "multiple_selection": false,
+            "attributes": [
+                "6d61a294-e99d-49ac-9059-af97557d3b82",
+                "5e49666b-fa1f-47ac-98b0-81990be6045e",
+                "ec61f6a3-aa7f-40b1-9ec1-d0dc52b39a77",
+                "c67c728f-c0f9-47cb-a9c3-35b6b3bba8c1",
+                "a81f13ee-a37d-4fd5-9a49-f337d424e982"
+            ]
+        },
+        {
+            "id": "3178aa65-f3bb-40a8-9c28-8c20f4599776",
+            "name": "Crust Type",
+            "min": 1,
+            "max": 1,
+            "collapse": false,
+            "multiple_selection": false,
+            "attributes": [
+                "c4358b2d-fada-4922-8b92-36409ebd7345",
+                "38638625-dd54-4162-bbdf-b31a63ff71e1",
+                "cdbd87dd-ee93-4df5-b8e5-0562de6301f0",
+                "64ac4f5e-348a-47e9-a0b2-79716e4c967b",
+                "1bfeb324-f357-47a5-b384-18ba335b2bd4"
+            ]
+        },
+        {
+            "id": "22222222-2222-2222-2222-222222222222",
+            "name": "Cuisson",
+            "min": 1,
+            "max": 1,
+            "collapse": false,
+            "multiple_selection": false,
+            "attributes": [
+                "ee33523a-42f6-48ac-9aeb-733614c84a76",
+                "cb779343-3527-409d-804b-40cff578e721",
+                "266647fc-678c-4e9f-9955-691125cdc4f3"
+            ]
+        },
+        {
+            "id": "51a73c47-f678-48ce-ae55-2c5219070e3a",
+            "name": "Protein Choice",
+            "min": 1,
+            "max": 1,
+            "collapse": false,
+            "multiple_selection": false,
+            "attributes": [
+                "08fa15c8-5f46-43c4-a297-63b371a7ec70",
+                "b2287a94-d1f4-4a4f-bad7-1c8a867a8846",
+                "843cf4c6-c495-4173-9630-5c9380ebb566",
+                "5360f15f-5561-4b56-a34c-e33c46cb136b",
+                "a2921c3d-b851-4ce9-96ad-8a6298bd3165",
+                "37dd8d86-28e5-40ba-82de-0392a0716110",
+                "84829b6f-e867-4435-9e13-3bdd74b3c8fa"
+            ]
+        },
+        {
+            "id": "137e1f36-f179-4e2b-bc5f-a290e95915c9",
+            "name": "Rice/Noodle Type",
+            "min": 1,
+            "max": 1,
+            "collapse": false,
+            "multiple_selection": false,
+            "attributes": [
+                "2e17c248-ac66-4634-a07e-4439fafdef42",
+                "00be0cf2-305c-4e58-a19d-62ac8e4836a4",
+                "6cb0f49f-f6c9-4267-8de5-170f2992bf7b",
+                "de1ed71a-ea28-43ea-9780-3141f6800d30",
+                "ea965d50-3494-43ba-a83c-1df4663235ce",
+                "f2e1fbfb-cb5b-4aa9-9195-cd9eed8700c0",
+                "8e4e1298-1984-4d08-b350-50b45d9786f7",
+                "29ec63e5-f45c-4889-b0f2-a52b628a14a4"
+            ]
+        },
+        {
+            "id": "f52f1bdd-7ee7-4f25-bc2b-ad7051f2ee45",
+            "name": "Sauce Preference",
+            "min": 0,
+            "max": 1,
+            "collapse": false,
+            "multiple_selection": false,
+            "attributes": [
+                "41aaca4f-9c11-48ae-9300-1027ad0ff4aa",
+                "a8821371-8f6c-4cf0-9af0-6fdcf03727d1",
+                "19703262-11f4-406d-8869-0291501816fd",
+                "092c0119-d12f-4be7-9835-fa9b38539424",
+                "c2622b1a-1089-46bc-bfd1-c42a67bfbe46"
+            ]
+        },
+        {
+            "id": "3f27a729-af33-43bb-bdc7-56f88b3ca59f",
+            "name": "Side Choice",
+            "min": 1,
+            "max": 1,
+            "collapse": false,
+            "multiple_selection": false,
+            "attributes": [
+                "9aa3d6bc-1bf7-4081-a53c-5f78d1fe5843",
+                "2a641128-255b-46e1-afd4-ea60cd50ca4c",
+                "88d9eafc-eeae-4695-a235-9ebb0147dd2f",
+                "4acd3db2-c4b7-435b-a919-7a64c8b28334",
+                "fd37983b-0116-41c8-aad3-ccff9255139a",
+                "c1a44770-e154-4600-a6fc-2cd3e8db2efd",
+                "03c81a4d-66a1-4569-adbe-ce630a6ffb08"
+            ]
+        },
+        {
+            "id": "11111111-1111-1111-1111-111111111111",
+            "name": "Size",
+            "min": 1,
+            "max": 1,
+            "collapse": false,
+            "multiple_selection": false,
+            "attributes": [
+                "e0326dbd-ee3d-4415-8105-effbf5fa06ea",
+                "8217123e-019c-4678-9890-1ed9b55d1dd2",
+                "32aef6f2-7cb4-4534-b21d-4a235f18cefc",
+                "1eb240c9-bb5e-4b22-884f-288b9273a981"
+            ]
+        },
+        {
+            "id": "19603cb2-b99a-4de6-bc29-dc5fde0ce7b4",
+            "name": "Special Instructions",
+            "min": 0,
+            "max": 5,
+            "collapse": false,
+            "multiple_selection": true,
+            "attributes": [
+                "f42eeee9-04ce-4348-b55c-afc5651cdee8",
+                "d10f17fc-4dcd-4009-b383-0c7a1393130b",
+                "74dc5e7b-8508-49b6-866c-1ae05c498978",
+                "afade5b4-6b2c-45f6-b7bf-f0bc804539ba",
+                "50e760f4-b424-4687-aff6-34d368129094",
+                "1f3d2f71-cbfd-4c0b-8494-67da6cfa654c",
+                "1c2cba6b-ddb7-47cb-9cbd-dbfef9f5e7a9"
+            ]
+        },
+        {
+            "id": "115de26c-0f50-44b7-a712-e96647607734",
+            "name": "Spice Level",
+            "min": 1,
+            "max": 1,
+            "collapse": false,
+            "multiple_selection": false,
+            "attributes": [
+                "62a83dc3-439c-419c-9675-bae2b77a3a6c",
+                "31442e0d-8379-44c7-8c2f-d25d270665f3",
+                "ce0fc901-83eb-4725-ba66-4821d68e6de2",
+                "9f7cec1a-eed6-4ad4-93b3-fef8239a2561",
+                "24bd20b6-f7b0-4a82-bfb4-65c150233a36",
+                "23b8441f-4e37-4f7b-bf81-d1930e3347e2"
+            ]
+        },
+        {
+            "id": "91a268cd-7ad9-40cb-a729-10fa2259726d",
+            "name": "Tortilla Type",
+            "min": 1,
+            "max": 1,
+            "collapse": false,
+            "multiple_selection": false,
+            "attributes": [
+                "510e85af-0e49-4927-88f7-76474def3325",
+                "9081da17-415e-4e0c-a448-7969d2accc79",
+                "92ccedd0-328c-4bb4-af8c-3caabee592cb",
+                "0ea0e78e-cf41-4e9f-8979-e3215a040ba7",
+                "5183fc86-57b5-4b62-bb36-d1348e77a29c"
+            ]
+        }
+    ],
+    "products": [
+        {
+            "id": "42c22ffd-d1db-4fdc-a181-8441f5606163",
+            "name": "California Roll",
+            "price": 8.99,
+            "image_url": null,
+            "description": "Crab, avocado, cucumber (8 pcs)",
+            "attributes_groups": [
+                "137e1f36-f179-4e2b-bc5f-a290e95915c9",
+                "19603cb2-b99a-4de6-bc29-dc5fde0ce7b4"
+            ],
+            "available": true
+        },
+        {
+            "id": "7ac19fd6-eeae-4a2b-becc-6e538b6a6b04",
+            "name": "Dragon Roll",
+            "price": 13.99,
+            "image_url": null,
+            "description": "Eel, cucumber topped with avocado (8 pcs)",
+            "attributes_groups": [
+                "137e1f36-f179-4e2b-bc5f-a290e95915c9",
+                "19603cb2-b99a-4de6-bc29-dc5fde0ce7b4"
+            ],
+            "available": true
+        },
+        {
+            "id": "51fd1123-9a33-4747-b1c7-bea34858189f",
+            "name": "Edamame",
+            "price": 4.99,
+            "image_url": null,
+            "description": "Steamed soybeans with sea salt",
+            "attributes_groups": [
+                "115de26c-0f50-44b7-a712-e96647607734",
+                "19603cb2-b99a-4de6-bc29-dc5fde0ce7b4"
+            ],
+            "available": true
+        },
+        {
+            "id": "bec7155f-9632-4bcb-8863-1f05f7f9251e",
+            "name": "Green Tea",
+            "price": 2.99,
+            "image_url": null,
+            "description": "Hot or iced Japanese green tea",
+            "attributes_groups": [],
+            "available": true
+        },
+        {
+            "id": "58ad18a4-419a-4f15-b338-20c54395dd32",
+            "name": "Green Tea Ice Cream",
+            "price": 4.99,
+            "image_url": null,
+            "description": "Traditional matcha flavored ice cream",
+            "attributes_groups": [],
+            "available": true
+        },
+        {
+            "id": "aaf464b7-e9fa-4983-8533-9b9f39d1595f",
+            "name": "Gyoza",
+            "price": 6.99,
+            "image_url": null,
+            "description": "Pan-fried pork dumplings (6 pcs)",
+            "attributes_groups": [
+                "115de26c-0f50-44b7-a712-e96647607734",
+                "19603cb2-b99a-4de6-bc29-dc5fde0ce7b4"
+            ],
+            "available": true
+        },
+        {
+            "id": "7624c641-4485-4b01-ac1a-f2e9013abefb",
+            "name": "Miso Soup",
+            "price": 3.99,
+            "image_url": null,
+            "description": "Traditional Japanese soup with tofu and seaweed",
+            "attributes_groups": [
+                "19603cb2-b99a-4de6-bc29-dc5fde0ce7b4"
+            ],
+            "available": true
+        },
+        {
+            "id": "afd02335-f81f-4ff7-9df3-8971a9e9ccd7",
+            "name": "Mochi Ice Cream",
+            "price": 5.99,
+            "image_url": null,
+            "description": "Japanese rice cake with ice cream (3 pcs)",
+            "attributes_groups": [],
+            "available": true
+        },
+        {
+            "id": "1dbd3bc7-6ec9-44e2-ac2e-f3e0c3f6ca46",
+            "name": "Rainbow Roll",
+            "price": 14.99,
+            "image_url": null,
+            "description": "California roll topped with assorted fish (8 pcs)",
+            "attributes_groups": [
+                "137e1f36-f179-4e2b-bc5f-a290e95915c9",
+                "19603cb2-b99a-4de6-bc29-dc5fde0ce7b4"
+            ],
+            "available": true
+        },
+        {
+            "id": "7f8682a9-1cd1-4b74-a50b-55ad823e3871",
+            "name": "Sake",
+            "price": 8.99,
+            "image_url": null,
+            "description": "Premium Japanese rice wine",
+            "attributes_groups": [],
+            "available": true
+        },
+        {
+            "id": "407f2e36-51a3-4b68-8b91-fc6416a45080",
+            "name": "Salmon Nigiri",
+            "price": 5.99,
+            "image_url": null,
+            "description": "Fresh Atlantic salmon over rice (2 pcs)",
+            "attributes_groups": [
+                "137e1f36-f179-4e2b-bc5f-a290e95915c9",
+                "19603cb2-b99a-4de6-bc29-dc5fde0ce7b4"
+            ],
+            "available": true
+        },
+        {
+            "id": "a31e4a5b-7055-4945-9949-21cc47177b76",
+            "name": "Sashimi Platter",
+            "price": 16.99,
+            "image_url": null,
+            "description": "Assorted fresh fish (9 pcs)",
+            "attributes_groups": [
+                "115de26c-0f50-44b7-a712-e96647607734",
+                "19603cb2-b99a-4de6-bc29-dc5fde0ce7b4"
+            ],
+            "available": true
+        },
+        {
+            "id": "0cd164be-5ee5-4ca2-bbca-e1dbe73a2200",
+            "name": "Spicy Tuna Roll",
+            "price": 9.99,
+            "image_url": null,
+            "description": "Tuna with spicy mayo (8 pcs)",
+            "attributes_groups": [
+                "115de26c-0f50-44b7-a712-e96647607734",
+                "137e1f36-f179-4e2b-bc5f-a290e95915c9",
+                "19603cb2-b99a-4de6-bc29-dc5fde0ce7b4"
+            ],
+            "available": true
+        },
+        {
+            "id": "1eee9f3b-0161-4668-872d-b0a83c7300ac",
+            "name": "Tuna Nigiri",
+            "price": 6.99,
+            "image_url": null,
+            "description": "Premium bluefin tuna over rice (2 pcs)",
+            "attributes_groups": [
+                "137e1f36-f179-4e2b-bc5f-a290e95915c9",
+                "19603cb2-b99a-4de6-bc29-dc5fde0ce7b4"
+            ],
+            "available": true
+        },
+        {
+            "id": "94930887-f4df-45f2-91f5-0178f5aea1d4",
+            "name": "Unagi Nigiri",
+            "price": 7.99,
+            "image_url": null,
+            "description": "Grilled eel with sweet sauce (2 pcs)",
+            "attributes_groups": [
+                "137e1f36-f179-4e2b-bc5f-a290e95915c9",
+                "19603cb2-b99a-4de6-bc29-dc5fde0ce7b4"
+            ],
+            "available": true
+        }
+    ],
+    "collections": [
+        {
+            "name": "Salads",
+            "position": 1,
+            "sections": [
+                {
+                    "name": "Salads",
+                    "position": 0,
+                    "products": [
+                        "51fd1123-9a33-4747-b1c7-bea34858189f",
+                        "7624c641-4485-4b01-ac1a-f2e9013abefb",
+                        "aaf464b7-e9fa-4983-8533-9b9f39d1595f"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Seafood",
+            "position": 2,
+            "sections": [
+                {
+                    "name": "Seafood",
+                    "position": 0,
+                    "products": [
+                        "407f2e36-51a3-4b68-8b91-fc6416a45080",
+                        "1eee9f3b-0161-4668-872d-b0a83c7300ac",
+                        "94930887-f4df-45f2-91f5-0178f5aea1d4",
+                        "a31e4a5b-7055-4945-9949-21cc47177b76"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Sandwiches",
+            "position": 3,
+            "sections": [
+                {
+                    "name": "Sandwiches",
+                    "position": 0,
+                    "products": [
+                        "42c22ffd-d1db-4fdc-a181-8441f5606163",
+                        "0cd164be-5ee5-4ca2-bbca-e1dbe73a2200",
+                        "7ac19fd6-eeae-4a2b-becc-6e538b6a6b04",
+                        "1dbd3bc7-6ec9-44e2-ac2e-f3e0c3f6ca46"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Desserts",
+            "position": 4,
+            "sections": [
+                {
+                    "name": "Desserts",
+                    "position": 0,
+                    "products": [
+                        "afd02335-f81f-4ff7-9df3-8971a9e9ccd7",
+                        "58ad18a4-419a-4f15-b338-20c54395dd32"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Drinks",
+            "position": 5,
+            "sections": [
+                {
+                    "name": "Drinks",
+                    "position": 0,
+                    "products": [
+                        "bec7155f-9632-4bcb-8863-1f05f7f9251e",
+                        "7f8682a9-1cd1-4b74-a50b-55ad823e3871"
+                    ]
+                }
+            ]
+        }
+    ]
+}
